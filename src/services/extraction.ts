@@ -35,7 +35,7 @@ import {
 
 export type ExtractionInput = ParsedDocument | DocumentInput | string;
 
-export type ExtractionDocument = LocatableDocument & { kind: DocumentKind; text: string };
+export type ExtractionDocument = LocatableDocument & { kind: DocumentKind; text: string; contentHash: string | null };
 
 export type ExtractionOptions = { llm?: LlmCaller };
 
@@ -95,7 +95,7 @@ export function toExtractionDocument(input: ExtractionInput, kind: DocumentKind)
   const fallbackId = kind === "INVOICE" ? "invoice" : "contract";
   let doc: ExtractionDocument;
   if (typeof input === "string") {
-    doc = { documentId: fallbackId, filename: `${fallbackId}.txt`, kind, text: input, pages: [input], pageNumbered: false };
+    doc = { documentId: fallbackId, filename: `${fallbackId}.txt`, kind, text: input, pages: [input], pageNumbered: false, contentHash: null };
   } else {
     if ("kind" in input && input.kind !== kind) {
       throw new EngineError("INVALID_INPUT", `Expected a ${kind.toLowerCase()} document, got ${input.kind.toLowerCase()} "${input.filename}".`);
@@ -108,6 +108,7 @@ export function toExtractionDocument(input: ExtractionInput, kind: DocumentKind)
       text: input.text,
       pages,
       pageNumbered: input.pageNumbered ?? false,
+      contentHash: input.contentHash ?? null,
     };
   }
   if (collapseWhitespace(doc.text).length === 0) {
@@ -342,6 +343,7 @@ export function parseInvoiceOutput(raw: string, doc: ExtractionDocument): Invoic
   const invoice: FreightInvoice = {
     documentId: doc.documentId,
     filename: doc.filename,
+    contentHash: doc.contentHash,
     invoiceNumber,
     carrier,
     shipmentId,

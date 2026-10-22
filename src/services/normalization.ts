@@ -111,6 +111,17 @@ export function formatMinor(minor: number, currency: string): string {
 }
 
 // ---------------------------------------------------------------------------
+// References (invoice numbers, shipment ids)
+// ---------------------------------------------------------------------------
+
+/** "fr-2026 0842" -> "FR20260842". Leading zeros are kept: "0842" and "842" stay different. */
+export function normalizeReference(value: string | null | undefined): string | null {
+  if (!value) return null;
+  const v = collapseWhitespace(value).toUpperCase().replace(/[^A-Z0-9]/gu, "");
+  return v.length > 0 ? v : null;
+}
+
+// ---------------------------------------------------------------------------
 // Currency
 // ---------------------------------------------------------------------------
 

@@ -11,6 +11,8 @@ cp .env.example .env   # ANTHROPIC_API_KEY=... (côté serveur uniquement, jamai
 npm test               # tests unitaires + e2e sur les fixtures (sans réseau)
 npm run demo           # démo bout en bout avec vrais appels IA sur les PDF de démo
 npm run demo -- --fixture   # démo hors ligne (extraction FIXTURE, explicitement étiquetée)
+npm run demo -- --duplicate # scénario de doublon (vrais appels IA)
+npm run test:live           # tous les tests, y compris ceux qui appellent la vraie IA
 ```
 
 Variables : `ANTHROPIC_API_KEY` (obligatoire pour l'IA), `FREIGHTRECOVER_AI_MODEL` (défaut `claude-opus-5-5`), `FREIGHTRECOVER_AI_EFFORT` (défaut `medium`).
@@ -36,6 +38,39 @@ const text = renderClaimAsText(claim); // pour copier / télécharger
 
 Les trois fonctions du contrat initial existent aussi séparément : `extractDocuments(invoice, contract)`, `auditInvoice(extracted)` (pure, synchrone), `generateClaim(finding)`. `extractDocuments` accepte un `ParsedDocument`, un `{ documentId, filename, text }` ou une simple chaîne.
 
+## Détection des doublons
+
+Le moteur compare la facture analysée aux factures déjà analysées. C'est l'API qui lui fournit cet historique : le moteur n'accède pas à la base.
+
+```ts
+// Après chaque analyse : stocker extracted.invoice (jsonb) + analysisId + statut métier
+// status: "ACTIVE" | "CREDITED" | "CANCELLED"  (avoir émis / facture annulée → jamais considérée comme doublonnée)
+const history: InvoiceHistoryEntry[] = rows.map((r) => ({ analysisId: r.id, status: r.status, invoice: r.invoice }));
+
+const { extracted, audit } = await analyzeDocuments(invoice, contract, { history, currentAnalysisId: analysisId });
+// Sans `history`, les doublons ne sont pas vérifiés : audit.duplicateCheck.performed === false.
+```
+
+Pour limiter le volume, l'historique peut être filtré en SQL sur le même transporteur. Le moteur refait de toute façon toutes les vérifications.
+
+| Situation | Résultat |
+|---|---|
+| Même fichier (SHA-256 identique) ou même `documentId` | Ré-analyse, **pas un doublon** (`duplicateCheck.sameDocumentAnalysisIds`) |
+| Même transporteur + même n° de facture, autre fichier | `NEEDS_REVIEW` `DUPLICATE_INVOICE_NUMBER` : réémission possible, paiement inconnu |
+| N° différent, même transporteur + même shipment, ligne identique sur frais, route, conteneur, quantité, montant et devise ; facture d'origine `ACTIVE` ; facture courante strictement postérieure ; preuves vérifiées des deux côtés | **`VERIFIED` `DUPLICATE_CHARGE`**, montant contesté = ligne entière |
+| Même shipment + même type de frais, mais montant, quantité, conteneur ou route différents | `NEEDS_REVIEW` `POSSIBLE_DUPLICATE` : correction ou conteneurs supplémentaires possibles |
+| Dates égales ou absentes, ou facture courante plus ancienne | `NEEDS_REVIEW` `POSSIBLE_DUPLICATE` : impossible de dire laquelle est le doublon |
+| Facture d'origine `CREDITED` / `CANCELLED` | Note seulement |
+| Frais non classés (`OTHER`), autre transporteur, autre shipment | Ignoré |
+
+Chaque ligne d'origine ne justifie qu'un seul doublon. Si une ligne est à la fois surfacturée et doublonnée, le `RATE_MISMATCH` reçoit `supersededBy` : il n'est pas compté dans `totals.verifiedOverchargeMinor` (la ligne entière est déjà comptée) et `generateClaim` le refuse (`CLAIM_NOT_ALLOWED`), pour éviter une double réclamation.
+
+`audit.discrepancies` est une union discriminée sur `type` :
+- `RATE_MISMATCH` : `contractEvidence`, `unitRateMinor`, `matchCriteria`, `supersededBy?`
+- `DUPLICATE_CHARGE` : `expectedAmountMinor = 0`, `differenceMinor = billedAmountMinor`, `original { analysisId, invoiceNumber, invoiceDate, invoiceLineId, filename }`, `originalEvidence`, `duplicateCriteria`
+
+Démo : `npm run demo -- --duplicate` analyse `invoice-sample.pdf`, puis `invoice-duplicate-sample.pdf` (FR-2026-0907, même fret refacturé). Elle détecte un doublon de 42 500 € et génère la réclamation correspondante.
+
 ## Statuts d'analyse
 
 | Moment | Statut API conseillé |
@@ -51,7 +86,8 @@ Les trois fonctions du contrat initial existent aussi séparément : `extractDoc
 
 - `invoices` / `invoice_lines` ← `extracted.invoice` / `extracted.invoice.lines` (`amountMinor`, `quantity`, `chargeType`, `source` en jsonb)
 - `contracts` / `rate_rules` ← `extracted.rates` (`unitRateMinor`, `rateBasis`, `validFrom`, `validTo`, `source` → `source_reference`)
-- `discrepancies` ← `audit.discrepancies[]` : `expected_amount = expectedAmountMinor`, `billed_amount = billedAmountMinor`, `difference = differenceMinor`, `evidence = { invoiceEvidence, contractEvidence, matchCriteria, calculation, explanation }`, `status = "VERIFIED"`
+- `discrepancies` ← `audit.discrepancies[]` : `type`, `expected_amount = expectedAmountMinor`, `billed_amount = billedAmountMinor`, `difference = differenceMinor`, `evidence` = l'objet complet en jsonb (preuves, critères, calcul, explication, `original` pour un doublon), `status = "VERIFIED"`. Un `RATE_MISMATCH` avec `supersededBy` n'est ni à additionner ni à réclamer.
+- Historique des doublons : `invoices` ← `extracted.invoice` (avec `contentHash`) + `analysis_id` + `status` (`ACTIVE` par défaut).
 - Les éléments à revoir sont dans `audit.reviewItems` / `audit.lineResults` (outcome `NEEDS_REVIEW`).
 - Claim : stocker `RecoveryClaim` en jsonb sur la discrepancy.
 

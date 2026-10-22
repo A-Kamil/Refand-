@@ -2,6 +2,7 @@
   "invoice": {
     "documentId": "invoice-sample",
     "filename": "invoice-sample.txt",
+    "contentHash": null,
     "invoiceNumber": "FR-2026-0842",
     "carrier": "Atlantic Ocean Lines",
     "shipmentId": "SHIP-00421",

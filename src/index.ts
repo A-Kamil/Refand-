@@ -5,7 +5,8 @@ export { EngineError, isEngineError, type EngineErrorCode } from "./errors.js";
 
 export { parseDocument, MAX_DOCUMENT_BYTES, type ParseDocumentInput } from "./services/document-parser.js";
 export { extractDocuments, type ExtractionInput, type ExtractionOptions } from "./services/extraction.js";
-export { auditInvoice } from "./services/audit.js";
+export { auditInvoice, type AuditOptions } from "./services/audit.js";
+export { detectDuplicates, type DuplicateCheckOptions, type DuplicateCheckResult } from "./services/duplicates.js";
 export { calculateOvercharge, findApplicableRate, matchRate, type RateMatch } from "./services/contract-matcher.js";
 export {
   assertClaimable,

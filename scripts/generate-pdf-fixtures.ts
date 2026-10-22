@@ -8,6 +8,7 @@ type Job = { source: string; target: string; title: string; pageBreakBefore?: st
 
 const jobs: Job[] = [
   { source: "invoice-sample.txt", target: "invoice-sample.pdf", title: "FR-2026-0842 Freight Invoice" },
+  { source: "invoice-duplicate-sample.txt", target: "invoice-duplicate-sample.pdf", title: "FR-2026-0907 Freight Invoice" },
   {
     source: "contract-sample.txt",
     target: "contract-sample.pdf",
