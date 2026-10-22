@@ -1,0 +1,153 @@
+{
+    "simulatedPortfolio": {
+        "simulated": true,
+        "label": "Simulated enterprise portfolio. Illustrative figures, not computed by this MVP.",
+        "currency": "EUR",
+        "annualFreightSpendMinor": 12500000000,
+        "potentiallyRecoverableMinor": 320000000,
+        "invoicesAnalyzed": 48250,
+        "anomaliesIdentified": 1842,
+        "byCategory": [
+            {
+                "type": "RATE_MISMATCH",
+                "label": "Contract rate overcharge",
+                "count": 1020,
+                "amountMinor": 195000000
+            },
+            {
+                "type": "DUPLICATE_BILLING",
+                "label": "Duplicate billing",
+                "count": 412,
+                "amountMinor": 78000000
+            },
+            {
+                "type": "UNJUSTIFIED_SURCHARGE",
+                "label": "Unjustified surcharges",
+                "count": 410,
+                "amountMinor": 47000000
+            }
+        ],
+        "byStatus": [
+            {
+                "status": "DETECTED",
+                "count": 1104
+            },
+            {
+                "status": "CLAIM_SENT",
+                "count": 498
+            },
+            {
+                "status": "RECOVERED",
+                "count": 240
+            }
+        ]
+    },
+    "live": {
+        "simulated": false,
+        "label": "Computed by FreightRecover AI from documents analysed on this deployment.",
+        "currency": "EUR",
+        "analyses": {
+            "total": 1,
+            "byStatus": {
+                "COMPLETED": 1
+            }
+        },
+        "invoicesAnalyzed": 1,
+        "invoicesStored": 4,
+        "discrepancies": {
+            "total": 1,
+            "verified": 1,
+            "needsReview": 0,
+            "byType": [
+                {
+                    "type": "RATE_MISMATCH",
+                    "count": 1,
+                    "amountMinor": 1850000
+                },
+                {
+                    "type": "DUPLICATE_BILLING",
+                    "count": 0,
+                    "amountMinor": 0
+                }
+            ]
+        },
+        "verifiedRecoverableMinor": 1850000,
+        "potentialToReviewMinor": 0,
+        "claims": {
+            "total": 1,
+            "ai": 0,
+            "template": 1
+        },
+        "recentDiscrepancies": [
+            {
+                "id": "62da9df2-af3a-4b48-9ea5-f8d71a2ef346",
+                "engineId": "FR-2026-0842#1:RATE_MISMATCH",
+                "analysisId": "39435a24-38d4-46d2-8152-cfb35616ee55",
+                "type": "RATE_MISMATCH",
+                "status": "VERIFIED",
+                "claimable": true,
+                "invoiceNumber": "FR-2026-0842",
+                "shipmentId": "SHIP-00421",
+                "carrier": "Atlantic Ocean Lines",
+                "currency": "EUR",
+                "billedAmountMinor": 4250000,
+                "expectedAmountMinor": 2400000,
+                "differenceMinor": 1850000,
+                "calculation": "EUR 42,500.00 − (EUR 24,000.00 × 1) = EUR 18,500.00",
+                "explanation": "The invoiced Ocean Freight charge of EUR 42,500.00 on invoice FR-2026-0842 exceeds the contractual rate of EUR 24,000.00 per container × 1 (clause 4.2.1, Shanghai (CNSHA) → Rotterdam (NLRTM), 40HC) by EUR 18,500.00.",
+                "evidence": {
+                    "calculation": "EUR 42,500.00 − (EUR 24,000.00 × 1) = EUR 18,500.00",
+                    "explanation": "The invoiced Ocean Freight charge of EUR 42,500.00 on invoice FR-2026-0842 exceeds the contractual rate of EUR 24,000.00 per container × 1 (clause 4.2.1, Shanghai (CNSHA) → Rotterdam (NLRTM), 40HC) by EUR 18,500.00.",
+                    "matchCriteria": [
+                        {
+                            "criterion": "CHARGE_TYPE",
+                            "invoiceValue": "Ocean Freight (OCEAN_FREIGHT)",
+                            "contractValue": "Ocean Freight (OCEAN_FREIGHT)"
+                        },
+                        {
+                            "criterion": "CARRIER",
+                            "invoiceValue": "Atlantic Ocean Lines",
+                            "contractValue": "Atlantic Ocean Lines"
+                        },
+                        {
+                            "criterion": "ROUTE",
+                            "invoiceValue": "Shanghai (CNSHA) → Rotterdam (NLRTM)",
+                            "contractValue": "Shanghai (CNSHA) → Rotterdam (NLRTM)"
+                        },
+                        {
+                            "criterion": "CONTAINER",
+                            "invoiceValue": "40HC",
+                            "contractValue": "40HC"
+                        },
+                        {
+                            "criterion": "DATE",
+                            "invoiceValue": "2026-10-15",
+                            "contractValue": "2026-01-01 to 2026-12-31"
+                        },
+                        {
+                            "criterion": "CURRENCY",
+                            "invoiceValue": "EUR",
+                            "contractValue": "EUR"
+                        }
+                    ],
+                    "invoiceEvidence": {
+                        "excerpt": "1 | Ocean Freight | Shanghai (CNSHA) to Rotterdam (NLRTM) | 40HC | 1 | EUR 42,500.00 | EUR 42,500.00",
+                        "filename": "invoice-sample.pdf",
+                        "verified": true,
+                        "documentId": "00000000-0000-4000-8000-000000000001"
+                    },
+                    "contractEvidence": {
+                        "excerpt": "4.2.1 Ocean Freight | Shanghai (CNSHA) to Rotterdam (NLRTM) | 40HC | EUR 24,000.00 per container",
+                        "section": "4.2.1",
+                        "filename": "contract-sample.pdf",
+                        "verified": true,
+                        "documentId": "00000000-0000-4000-8000-000000000002"
+                    }
+                },
+                "claimCount": 1,
+                "latestClaimId": "c5bad306-722a-440e-b251-e1fd9142dca0",
+                "createdAt": "2026-10-22T10:44:52.786Z"
+            }
+        ]
+    }
+}

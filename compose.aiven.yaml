@@ -1,0 +1,18 @@
+# Aiven Runtime manifest: builds the API from ./Dockerfile and creates an Aiven for PostgreSQL
+# service integrated with it. Runtime replaces DATABASE_URL with the managed service URI.
+# Secrets (ANTHROPIC_API_KEY) are set in the Aiven Console, never in this file.
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      PORT: "8080"
+      DATABASE_URL: postgresql://postgres:postgres@freightrecover-pg:5432/defaultdb
+    depends_on:
+      - freightrecover-pg
+
+  freightrecover-pg:
+    image: postgres:17
