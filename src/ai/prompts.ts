@@ -10,7 +10,7 @@ Your task is to extract structured information from one ocean freight document: 
 You must only extract facts explicitly supported by the provided document.
 
 Rules:
-1. Never invent missing information. Use null for any field the document does not state, and add a warning explaining what is missing.
+1. Never invent missing information. Use null for any field the document does not state, and add a warning explaining what is missing. Warnings are only for schema facts that are missing, ambiguous or contradictory; do not comment on disclaimers, signatures, document style or out-of-scope clauses.
 2. Never infer a contractual rate without supporting text.
 3. Never assume that an invoice total is equivalent to a freight line amount. Extract each invoice line separately.
 4. Every excerpt must be copied verbatim from the document: same words, numbers, punctuation and order. Keep excerpts short: the single line or sentence that supports the value. The excerpt for a line item or rate must contain its amount exactly as printed.
