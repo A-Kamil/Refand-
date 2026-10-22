@@ -1,28 +1,30 @@
-# API
+# API utilisée par le front
 
-Le front consomme le backend **FreightRecover** (dépôt `A-Kamil/Refand-`, branche `dev1/api`).
-Le contrat de référence est son `API.md` ; les types TypeScript correspondants sont dans [`src/api/types.ts`](../src/api/types.ts), le client dans [`src/api/http.ts`](../src/api/http.ts).
+Le front consomme le backend de ce dépôt (`api/`). **Le contrat de référence est le [API.md](../../API.md) racine** ; les types TypeScript correspondants sont dans [`src/api/types.ts`](../src/api/types.ts) et le client dans [`src/api/http.ts`](../src/api/http.ts).
 
-Points qui structurent l'interface :
-
-- **Montants en centimes entiers** (`1850000` = 18 500,00 €).
-- **Erreurs** : `{ "error": { "code", "message" } }` ; le front affiche `message` et réagit à `code` (`AI_UNAVAILABLE`, `CLAIM_NOT_ALLOWED`…).
-- **Analyse** : `POST /api/analyses` → polling de `GET /api/analyses/:id` toutes les secondes jusqu'à `COMPLETED`, `NEEDS_REVIEW` ou `FAILED`. Les 3 étapes (`steps[]`) sont affichées telles quelles.
-- **`extractionMethod`** : `AI` ou `FIXTURE`. Une fixture est toujours étiquetée « Demo documents · pre-built extraction ».
-- **Anomalies** : `RATE_MISMATCH` (vérifiée, réclamable) et `DUPLICATE_BILLING` (à vérifier, non réclamable : `POST …/claim` répond `409 CLAIM_NOT_ALLOWED`).
-- **Réclamation** : `text` (à copier), `downloadUrl` (téléchargement), `generatedBy` (`AI` | `TEMPLATE`), `requiresHumanApproval: true`.
-- **Dashboard** : `simulatedPortfolio` (fictif, étiqueté) et `live` (réel).
+## Quel écran appelle quoi
 
 | Écran | Endpoints |
 |---|---|
-| Dashboard | `GET /api/dashboard`, `GET /health` (pied de page) |
-| New audit | `POST /api/documents/upload` (champs `invoice` + `contract`), `GET /api/documents?demo=true`, `POST /api/analyses` |
-| Analyse | `GET /api/analyses/:id` |
+| Dashboard | `GET /api/dashboard` (partie `live`), `GET /health` (pied de page) |
+| New audit | `GET /health`, `POST /api/documents/upload` (champs `invoice` + `contract`), `POST /api/analyses` (`extractionMode: "AI"`) |
+| Analyse | `GET /api/analyses/:id` (sondage 1 s) |
 | Résultats | `GET /api/analyses/:id` |
 | Investigation | `GET /api/discrepancies/:id` |
 | Réclamation | `POST /api/discrepancies/:id/claim` (`{ regenerate: true }` pour régénérer), `GET /api/claims/:id/download` |
 
-Documents de démo du backend (IDs fixes, `extractionMode: "FIXTURE"` uniquement) :
-`00000000-0000-4000-8000-000000000001` (facture FR-2026-0842, 42 500 €) et `…0002` (contrat AOL-SVC-2026-017, clause 4.2.1 : 24 000 €).
+## Points du contrat qui structurent l'interface
 
-CORS : le backend autorise `localhost` par défaut. Le mode IA en direct exige `ANTHROPIC_API_KEY` **côté serveur** ; sans elle, seuls les documents de démo sont analysables (le front le détecte via `/health` et le dit).
+- **Montants en centimes entiers** : `1850000` = 18 500,00 €.
+- **Erreurs** : `{ "error": { "code", "message" } }` ; le front affiche `message` et réagit à `code` (`AI_UNAVAILABLE`, `CLAIM_NOT_ALLOWED`…).
+- **Analyse** : `PENDING → PROCESSING → COMPLETED | NEEDS_REVIEW | FAILED`. Les 3 étapes (`steps[]`) sont affichées telles quelles.
+- **Anomalies** : `RATE_MISMATCH` (`VERIFIED`, réclamable) et `DUPLICATE_BILLING` (`NEEDS_REVIEW`, **non réclamable** : `POST …/claim` répond `409 CLAIM_NOT_ALLOWED`).
+- **Totaux** : `verifiedRecoverableMinor` et `potentialDuplicateMinor` sont **toujours affichés séparément**.
+- **Réclamation** : `text` (à copier), `downloadUrl` (téléchargement), `generatedBy` (`AI` | `TEMPLATE`), `requiresHumanApproval: true`.
+- **`extractionMethod`** : `AI` ou `FIXTURE`. Une extraction `FIXTURE` est étiquetée comme telle.
+- **Non utilisé** : `simulatedPortfolio` (portefeuille fictif du dashboard) n'est pas affiché.
+
+## Configuration serveur
+
+- **CORS** : `localhost` est autorisé par défaut (voir `CORS_ORIGINS` dans [DEPLOY.md](../../DEPLOY.md)).
+- **IA** : l'analyse exige `ANTHROPIC_API_KEY` **côté serveur**. Sans elle, `/health` renvoie `ai.configured: false` ; le front le dit et désactive l'envoi.

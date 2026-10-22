@@ -254,7 +254,6 @@ export interface Health {
 export interface ApiClient {
   getHealth(): Promise<Health>;
   getDashboard(): Promise<Dashboard>;
-  listDemoDocuments(): Promise<ApiDocument[]>;
   uploadDocuments(files: { invoice: File; contract: File }): Promise<UploadResponse>;
   createAnalysis(req: CreateAnalysisRequest): Promise<Analysis>;
   getAnalysis(id: string): Promise<Analysis>;

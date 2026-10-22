@@ -1,47 +1,59 @@
-# refand — Get back what's yours
+# refand — front
 
-Front-end de **refand** (logo : ref&) : audit de factures de fret maritime et récupération des surfacturations.
 React 18 · TypeScript · Vite · CSS pur (tokens). Aucune dépendance UI.
+Le front ne parle qu'au backend : **aucune donnée d'exemple n'est embarquée**.
 
-## Lancer avec le vrai backend
-
-Le backend est le dépôt `A-Kamil/Refand-` (branche `dev1/api` : API Fastify + PostgreSQL + moteur d'audit).
+## Lancer
 
 ```bash
-# 1. Backend (dans son propre dossier)
-podman run -d --name refand-pg -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=freightrecover \
-  -p 55432:5432 docker.io/library/postgres:17          # ou: docker compose up db
-DATABASE_URL=postgresql://postgres:postgres@localhost:55432/freightrecover npm run dev   # http://localhost:8080
-# Optionnel : ANTHROPIC_API_KEY=… (côté serveur) pour l'extraction IA en direct de VOS documents
-
-# 2. Front
 npm install
-cp .env.example .env        # VITE_API_BASE_URL=http://localhost:8080
-npm run dev                 # http://localhost:5173
+cp .env.example .env     # VITE_API_BASE_URL=http://localhost:8080
+npm run dev              # http://localhost:5173
+npm run build            # typecheck + build de production
 ```
 
-Sans `ANTHROPIC_API_KEY`, le bouton **Try with demo documents** lance une vraie analyse sur les documents de démo du backend (extraction pré-construite, étiquetée comme telle). Le pied de page affiche l'état réel du backend (base de données, IA).
+Le backend doit tourner (voir le [README racine](../README.md)). Le pied de page affiche son état réel : base de données, IA.
 
-## Parcours
-Dashboard (hero + widget « How it works » à défilement horizontal) → New audit → Analyse (3 étapes pilotées par le backend) → Résultats → Investigation → Réclamation (copie / téléchargement, brouillon à valider).
+## Variables d'environnement
+
+| Variable | Rôle |
+|---|---|
+| `VITE_API_BASE_URL` | URL du backend. **Public** (tout `VITE_*` l'est) : ne jamais y mettre de secret. |
+
+## Pages
 
 | Route | Page |
 |---|---|
-| `/` | Dashboard : portefeuille **simulé** + audits **réels** |
-| `/audit/new` | Dépôt facture + contrat, ou documents de démo |
-| `/analyses/:id` · `/analyses/:id/results` | Progression · anomalies détectées |
-| `/discrepancies/:id` · `…/claim` | Investigation · brouillon de réclamation |
-
-## Documentation
-- [`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md) — identité, nommage (refand / ref&), règles
-- [`docs/HOW_IT_WORKS.md`](docs/HOW_IT_WORKS.md) — widget « How it works » : contenu, spec, code
-- [`docs/API.md`](docs/API.md) — usage du contrat backend
+| `/` | Dashboard : hero, widget « How it works » à défilement horizontal, vos audits (chiffres réels) |
+| `/audit/new` | Dépôt facture + contrat |
+| `/analyses/:id` | Progression en 3 étapes (sondage 1 s) |
+| `/analyses/:id/results` | Anomalies détectées |
+| `/discrepancies/:id` | Investigation d'une anomalie |
+| `/discrepancies/:id/claim` | Brouillon de réclamation |
 
 ## Structure
+
 ```
-src/api/         types (contrat backend), client HTTP
-src/components/  Layout, Sky (fond), ui, Pen, Stepper, FileSlot
-src/pages/       une page par étape
-src/styles/      tokens.css (source de vérité) · base · components · pages · sky
-public/brand/    logos recadrés depuis logo1.png / logo2.png
+src/
+  api/         types.ts (contrat backend) · http.ts (client) · index.ts
+  components/  Layout · Sky (fond animé) · HowItWorks · ui · Pen · Stepper · FileSlot · DiscrepancyTable
+  pages/       une page par route
+  lib/         format (centimes → €) · calc (écart recalculé) · useAsync
+  styles/      tokens.css (source de vérité) · base · components · pages · sky
+public/brand/  logos
 ```
+
+## Documentation
+
+| Doc | Pour qui / pourquoi |
+|---|---|
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Comprendre comment le front consomme le backend, les états, les règles d'intégrité |
+| [docs/API.md](docs/API.md) | Quels endpoints sont utilisés, par quel écran, et les points du contrat qui structurent l'UI |
+| [docs/DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md) | Identité, nommage (refand / ref&), couleurs, typo, mouvement, composants |
+| [docs/HOW_IT_WORKS.md](docs/HOW_IT_WORKS.md) | Le widget à défilement horizontal : contenu, spec, code |
+
+## Conventions
+
+- **Nom** : « refand » dans les textes, « ref& » dans le logo et les slogans.
+- **Promesses** : jamais de remboursement garanti ; la validation humaine est toujours dite.
+- **Données** : aucune donnée fictive dans l'interface ; un état vide invite à lancer un audit.

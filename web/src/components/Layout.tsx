@@ -57,7 +57,7 @@ export function Layout() {
           ) : health ? (
             <>
               Backend connected · database {health.db.ok ? 'ok' : 'down'} · live AI{' '}
-              {health.ai.configured ? 'on' : 'off (demo documents only)'}
+              {health.ai.configured ? 'on' : 'off'}
             </>
           ) : (
             'Checking backend…'

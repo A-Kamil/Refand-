@@ -32,7 +32,7 @@ Exemples : « *refand* checks every freight invoice… » (texte) ; « *ref&* he
 ### Vérité d'abord (wording)
 - Autorisé : « money you may not know you've lost », « can be claimed back », « Verified recoverable », « Potential to review ».
 - **Interdit** : « guaranteed », « you will receive », « get your money back » comme promesse.
-- Vocabulaire repris du backend : **anomalies**, **verified**, **needs review**, **contract rate overcharge**, **duplicate billing**, **potential duplicate**. Une extraction `FIXTURE` n'est **jamais** présentée comme une extraction IA en direct (badge « Demo documents · pre-built extraction »).
+- Vocabulaire repris du backend : **anomalies**, **verified**, **needs review**, **contract rate overcharge**, **duplicate billing**, **potential duplicate**. Si le backend signale une extraction `FIXTURE` (pré-construite), elle n'est **jamais** présentée comme une extraction IA en direct : un badge l'indique.
 
 ### À éviter
 - cartes, panneaux en verre, ombres de boîte, glow, halos ;
@@ -55,7 +55,7 @@ Deux couleurs de marque, extraites de `logo1.png` / `logo2.png` : `--brand-mint 
 
 > La menthe seule ne se lit pas en texte sur fond clair : elle sert d'aplat, avec du texte sombre dessus.
 
-Sémantique : `--recover` (argent récupéré), `--warn` (démo / simulé / à vérifier), `--danger` (erreur).
+Sémantique : `--recover` (argent récupéré), `--warn` (à vérifier / attention), `--danger` (erreur).
 
 ---
 
@@ -68,10 +68,13 @@ Hero : `clamp(2.6rem, 7vw, 5.4rem)`.
 
 ## 4. Mise en page : tout est posé sur le fond
 
-- **Sheet** = une section, pas une carte : un filet noir 1,5 px en haut, un titre, le contenu. Variante `--simulated` : filet pointillé.
+- **Sheet** = une section, pas une carte : un filet noir 1,5 px en haut, un titre, le contenu.
 - **Tableaux** : en-têtes en petites capitales, filets fins, montants alignés à droite.
 - **Document** : seule la lettre de réclamation est une « feuille » (c'est un vrai document à relire), avec une marge verte et le tampon DRAFT.
 - Contenu ≤ 1120 px, centré. Rayons : `--radius-sm 8`, `--radius 12`, pilule pour boutons et badges.
+
+### Bouton d'appel à l'action (« route »)
+Le CTA principal du dashboard (`.cta-route`) n'est pas un bouton plein : c'est le **texte**, une **route pointillée qui avance** vers la droite, et une **pointe de flèche ronde** menthe. Au survol, la route s'allonge, accélère, et la pointe glisse vers l'avant. Les boutons de formulaire (`Analyze documents`, `Copy claim`…) restent des pilules plates (`.btn`).
 
 ### Barre de navigation
 Aucun fond, aucune bordure, pas collante. De gauche à droite : le « & » (logo 1), deux liens en texte simple (Dashboard, New audit), un lien « Start an audit → ». Le lien actif a un trait menthe qui se déploie de gauche à droite ; au survol il se déploie à 35 %. Le logo pivote légèrement au survol.
@@ -106,17 +109,17 @@ Sous le hero du dashboard : une scène épinglée où le défilement **vertical*
 
 ## 8. Couche « route » (repères)
 
-[`Pen.tsx`](../src/components/Pen.tsx) : `<FlowArrow>`, `<Circled>` (anneau pulsé : **un seul** par écran, le montant récupérable vérifié), `<Underlined>`, `<Marker>` (preuve surlignée), `<MarginNote>` (puce fléchée, texte **calculé**), `<Stamp>` (`DRAFT`, `SIMULATED DEMO DATA`).
+[`Pen.tsx`](../src/components/Pen.tsx) : `<FlowArrow>`, `<Circled>` (anneau pulsé : **un seul** par écran, le montant récupérable vérifié), `<Underlined>`, `<Marker>` (preuve surlignée), `<MarginNote>` (puce fléchée, texte **calculé**), `<Stamp>` (`DRAFT`).
 Ces éléments n'apportent jamais d'information absente des données.
 
 ---
 
 ## 9. Intégrité des données
 
-- **Portefeuille simulé** : fourni par le backend (`simulatedPortfolio`, `simulated: true`), toujours tamponné « Simulated demo data » avec le libellé renvoyé par l'API.
+- **Aucune donnée fictive dans l'interface** : le dashboard n'affiche que les chiffres réels du backend (`live`). Tant qu'aucun audit n'a été lancé, il affiche un état vide qui invite à en lancer un.
 - **Récupérable vérifié** (`RATE_MISMATCH`, `VERIFIED`) et **doublons à vérifier** (`DUPLICATE_BILLING`, `NEEDS_REVIEW`) ne sont **jamais additionnés**.
 - **Montants** : entiers en centimes (`1850000` = 18 500,00 €), formatés par `moneyMinor`. L'écart est **recalculé** (`facturé − attendu`) ; toute incohérence avec le backend s'affiche.
-- **Pas de mode démo local** : le front ne parle qu'au backend. « Try with demo documents » lance une vraie analyse sur les documents de démo du backend (`extractionMode: FIXTURE`), étiquetée comme telle.
+- **Pas de mode démo** : le front ne parle qu'au backend et n'embarque aucune donnée d'exemple.
 - Aucune preuve ni clause inventée ; chaque extrait indique s'il est **verbatim · verified**.
 
 ---

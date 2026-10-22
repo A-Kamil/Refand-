@@ -40,11 +40,6 @@ export const httpClient: ApiClient = {
   getHealth: () => request('/health'),
   getDashboard: () => request('/api/dashboard'),
 
-  async listDemoDocuments() {
-    const res = await request<{ documents: import('./types').ApiDocument[] }>('/api/documents?demo=true');
-    return res.documents;
-  },
-
   uploadDocuments({ invoice, contract }) {
     const form = new FormData();
     form.append('invoice', invoice);

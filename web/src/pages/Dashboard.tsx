@@ -1,9 +1,10 @@
 import type { ReactNode } from 'react';
+import { Link } from 'react-router-dom';
 import { api } from '../api';
 import { useAsync } from '../lib/useAsync';
-import { integer, moneyCompactMinor, moneyMinor } from '../lib/format';
-import { Badge, ButtonLink, EmptyState, ErrorState, Loading, Sheet } from '../components/ui';
-import { Stamp, Underlined } from '../components/Pen';
+import { integer, moneyMinor } from '../lib/format';
+import { Badge, EmptyState, ErrorState, Loading, Sheet } from '../components/ui';
+import { Underlined } from '../components/Pen';
 import { HowItWorks } from '../components/HowItWorks';
 import { DiscrepancyTable } from '../components/DiscrepancyTable';
 import { IconArrowDown, IconArrowRight } from '../components/Icons';
@@ -33,14 +34,17 @@ export function Dashboard() {
           above it — money you may not know you’ve lost.
         </p>
         <div className="hero__actions">
-          <ButtonLink to="/audit/new" variant="primary" className="btn--lg">
-            Find out what you’re owed <IconArrowRight />
-          </ButtonLink>
+          <Link to="/audit/new" className="cta-route">
+            <span className="cta-route__label">Find out what you’re owed</span>
+            <span className="cta-route__path" aria-hidden />
+            <span className="cta-route__go" aria-hidden>
+              <IconArrowRight width={18} height={18} strokeWidth={2.4} />
+            </span>
+          </Link>
           <a href="#how" className="hero__scroll">
             How it works <IconArrowDown width={16} height={16} strokeWidth={2.2} />
           </a>
         </div>
-        <p className="faint small hero__note">You review every claim before anything is sent.</p>
       </section>
 
       <HowItWorks />
@@ -58,32 +62,6 @@ export function Dashboard() {
 
       {state.status === 'ready' && (
         <>
-          {/* Portefeuille fictif — fourni par le backend, toujours étiqueté « simulated » */}
-          <Sheet
-            title="Enterprise portfolio"
-            aside={<Stamp tone="warn">Simulated demo data</Stamp>}
-            className="sheet--simulated"
-          >
-            {(() => {
-              const p = state.data.simulatedPortfolio;
-              return (
-                <>
-                  <div className="kpi-strip">
-                    <Kpi label="Annual freight spend" value={moneyCompactMinor(p.annualFreightSpendMinor, p.currency)} />
-                    <Kpi
-                      label="Potentially recoverable"
-                      value={moneyCompactMinor(p.potentiallyRecoverableMinor, p.currency)}
-                      tone="recover"
-                    />
-                    <Kpi label="Invoices analyzed" value={integer(p.invoicesAnalyzed)} />
-                    <Kpi label="Anomalies identified" value={integer(p.anomaliesIdentified)} />
-                  </div>
-                  <p className="sheet__foot faint small">{p.label}</p>
-                </>
-              );
-            })()}
-          </Sheet>
-
           {/* Chiffres réels, calculés par le backend depuis la base de données */}
           <Sheet
             title="Your audits"
@@ -118,9 +96,13 @@ export function Dashboard() {
                     <EmptyState
                       title="No audit yet"
                       action={
-                        <ButtonLink to="/audit/new" variant="primary">
-                          Find out what you’re owed
-                        </ButtonLink>
+                        <Link to="/audit/new" className="cta-route">
+                          <span className="cta-route__label">Start your first audit</span>
+                          <span className="cta-route__path" aria-hidden />
+                          <span className="cta-route__go" aria-hidden>
+                            <IconArrowRight width={18} height={18} strokeWidth={2.4} />
+                          </span>
+                        </Link>
                       }
                     >
                       Upload a freight invoice and its contract — refand shows where you were billed above what you

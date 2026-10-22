@@ -1,11 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { api, ApiError, DEMO_CONTRACT_ID, DEMO_INVOICE_ID } from '../api';
+import { api, ApiError } from '../api';
 import { useAsync } from '../lib/useAsync';
 import { FileSlot, type SlotState } from '../components/FileSlot';
 import { Button, PageHeader, Sheet } from '../components/ui';
 import { IconAlert, IconArrowRight } from '../components/Icons';
-import { MarginNote } from '../components/Pen';
 
 const empty: SlotState = { status: 'empty' };
 
@@ -13,18 +12,17 @@ export function NewAudit() {
   const nav = useNavigate();
   const [invoice, setInvoice] = useState<SlotState>(empty);
   const [contract, setContract] = useState<SlotState>(empty);
-  const [busy, setBusy] = useState<'upload' | 'demo' | null>(null);
+  const [busy, setBusy] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
   // La configuration réelle du serveur décide de ce qui est possible (extraction IA en direct ou non).
   const health = useAsync(() => api.getHealth(), []);
   const aiOff = health.state.status === 'ready' && !health.state.data.ai.configured;
-  const demoDocs = useAsync(() => api.listDemoDocuments(), []);
 
   const filesReady = invoice.file && invoice.status !== 'error' && contract.file && contract.status !== 'error';
 
-  async function start(run: () => Promise<{ id: string }>, mode: 'upload' | 'demo') {
-    setBusy(mode);
+  async function start(run: () => Promise<{ id: string }>) {
+    setBusy(true);
     setError(null);
     try {
       const a = await run();
@@ -33,7 +31,7 @@ export function NewAudit() {
       setInvoice((s) => (s.status === 'uploading' ? { ...s, status: 'ready' } : s));
       setContract((s) => (s.status === 'uploading' ? { ...s, status: 'ready' } : s));
       setError(e as Error);
-      setBusy(null);
+      setBusy(false);
     }
   }
 
@@ -50,19 +48,7 @@ export function NewAudit() {
         contractDocumentId: up.contractDocumentId,
         extractionMode: 'AI',
       });
-    }, 'upload');
-
-  /** Documents de démo du backend : extraction pré-construite (FIXTURE), toujours signalée comme telle. */
-  const analyzeDemo = () =>
-    start(
-      () =>
-        api.createAnalysis({
-          invoiceDocumentId: DEMO_INVOICE_ID,
-          contractDocumentId: DEMO_CONTRACT_ID,
-          extractionMode: 'FIXTURE',
-        }),
-      'demo',
-    );
+    });
 
   const network = error instanceof ApiError && error.kind === 'network';
   const aiUnavailable = error instanceof ApiError && error.code === 'AI_UNAVAILABLE';
@@ -80,8 +66,8 @@ export function NewAudit() {
           <div className="notice notice--warn" role="status">
             <IconAlert />
             <div>
-              <strong>Live AI extraction is not configured on this server.</strong> Your own documents can’t be
-              analysed yet — run the demo documents below to see the full flow.
+              <strong>Document analysis is not available yet.</strong> The server has no AI extraction key configured,
+              so uploaded documents can’t be analysed until one is set.
             </div>
           </div>
         )}
@@ -122,40 +108,10 @@ export function NewAudit() {
         )}
 
         <div className="sheet__actions">
-          <Button variant="primary" disabled={!filesReady || aiOff} busy={busy === 'upload'} onClick={analyzeUploads}>
-            {busy === 'upload' ? 'Starting…' : 'Analyze documents'} {busy !== 'upload' && <IconArrowRight />}
+          <Button variant="primary" disabled={!filesReady || aiOff} busy={busy} onClick={analyzeUploads}>
+            {busy ? 'Starting…' : 'Analyze documents'} {!busy && <IconArrowRight />}
           </Button>
           {!filesReady && !aiOff && <span className="faint small">Add both documents to continue.</span>}
-        </div>
-      </Sheet>
-
-      <Sheet title="No documents at hand?">
-        <div className="demo-offer">
-          <div>
-            <p className="muted">
-              Run the full flow on the backend’s demo documents
-              {demoDocs.state.status === 'ready' && demoDocs.state.data.length > 0 && (
-                <>
-                  {' '}
-                  (
-                  <span className="mono">
-                    {demoDocs.state.data
-                      .filter((d) => d.format === 'PDF')
-                      .map((d) => d.filename)
-                      .join(', ')}
-                  </span>
-                  )
-                </>
-              )}
-              . The extraction is pre-built and labeled as such everywhere — it is not a live AI extraction.
-            </p>
-          </div>
-          <div className="demo-offer__cta">
-            <Button busy={busy === 'demo'} onClick={analyzeDemo}>
-              Try with demo documents
-            </Button>
-            <MarginNote>takes a few seconds</MarginNote>
-          </div>
         </div>
       </Sheet>
     </>

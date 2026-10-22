@@ -46,7 +46,7 @@ export function MarginNote({ children }: { children: ReactNode }) {
   );
 }
 
-/** Tampon de statut (DRAFT, DEMO, SIMULATED). */
+/** Tampon de statut (DRAFT). */
 export function Stamp({ children, tone = 'pen' }: { children: ReactNode; tone?: 'pen' | 'warn' }) {
   return <span className={`stamp stamp--${tone}`}>{children}</span>;
 }

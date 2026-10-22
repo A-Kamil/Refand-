@@ -166,9 +166,6 @@
   gap: var(--sp-4);
   margin-top: var(--sp-5);
 }
-.sheet--simulated {
-  border-top: 1.5px dashed var(--ink-500);
-}
 
 /* ── Tableaux ────────────────────────────────────────────── */
 .table-wrap {

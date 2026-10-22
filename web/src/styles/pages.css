@@ -202,14 +202,6 @@ html {
   gap: var(--sp-5);
   margin-top: var(--sp-5);
 }
-.hero__note {
-  margin-top: var(--sp-4);
-}
-.btn--lg {
-  height: 48px;
-  padding: 0 var(--sp-6);
-  font-size: var(--fs-md);
-}
 
 /* ── KPI ─────────────────────────────────────────────────── */
 .kpi-strip {
@@ -334,24 +326,6 @@ html {
   border-top: 1.5px solid var(--green-400);
 }
 
-/* ── Offre démo ──────────────────────────────────────────── */
-.demo-offer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--sp-5);
-}
-.demo-offer p {
-  margin-top: var(--sp-1);
-  max-width: 56ch;
-}
-.demo-offer__cta {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-3);
-  flex: none;
-}
-
 /* ── Lettre de réclamation : un vrai document ────────────── */
 .letter {
   position: relative;
@@ -432,7 +406,6 @@ html {
     padding-left: 0;
     border-left: 0;
   }
-  .demo-offer,
   .cta-bar,
   .page-header {
     flex-direction: column;
@@ -561,5 +534,57 @@ html {
 @media (prefers-reduced-motion: reduce) {
   .hero__scroll svg {
     animation: none;
+  }
+}
+
+/* ── CTA « route » : le texte, une route qui avance, une pointe de flèche ── */
+.cta-route {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-3);
+  color: var(--text);
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+}
+.cta-route__path {
+  width: 56px;
+  height: 14px;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='none'><circle cx='7' cy='7' r='1.6' fill='%2326bd68'/></svg>") repeat-x left center;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 25%);
+  mask-image: linear-gradient(90deg, transparent, #000 25%);
+  animation: cta-march 0.9s linear infinite;
+  transition: width 600ms var(--ease-out);
+}
+@keyframes cta-march {
+  to {
+    background-position-x: 14px;
+  }
+}
+.cta-route__go {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--ink-900);
+  transition: transform 600ms var(--spring);
+}
+.cta-route:hover .cta-route__path {
+  width: 96px;
+  animation-duration: 0.45s;
+}
+.cta-route:hover .cta-route__go {
+  transform: translateX(6px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .cta-route__path {
+    animation: none;
+  }
+  .cta-route__path,
+  .cta-route__go {
+    transition: none;
   }
 }
