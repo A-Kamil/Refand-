@@ -1,0 +1,34 @@
+MASTER OCEAN FREIGHT SERVICE AGREEMENT
+Contract No: AOL-SVC-2026-017
+
+FICTIONAL DOCUMENT - FREIGHTRECOVER AI DEMO
+
+Between: Atlantic Ocean Lines (the "Carrier")
+And: Lumiere Retail Group SAS (the "Shipper")
+
+Clause 1 - Scope
+1.1 This Agreement sets out the ocean freight rates applicable to containerised shipments booked by the Shipper with the Carrier.
+
+Clause 2 - Term
+2.1 This Agreement is valid from 2026-01-01 to 2026-12-31 inclusive. Rates apply to shipments with a shipment date within this period.
+
+Clause 3 - Currency
+3.1 All rates in this Agreement are expressed in EUR.
+
+Clause 4 - Rate Schedule
+4.1 The rates below are all-in ocean freight rates per container. Each rate is the total ocean freight charge applicable to one container on the stated route.
+4.2 Ocean Freight rates (Carrier: Atlantic Ocean Lines):
+4.2.1 Ocean Freight | Shanghai (CNSHA) to Rotterdam (NLRTM) | 40HC | EUR 24,000.00 per container
+4.2.2 Ocean Freight | Shanghai (CNSHA) to Hamburg (DEHAM) | 40HC | EUR 25,500.00 per container
+4.2.3 Ocean Freight | Shanghai (CNSHA) to Rotterdam (NLRTM) | 20GP | EUR 14,000.00 per container
+4.3 The rates in Clause 4.2 apply to every shipment booked under this Agreement during its term, including shipment SHIP-00421.
+
+Clause 5 - Surcharges
+5.1 Surcharges, terminal handling charges and documentation fees are invoiced as separate invoice lines and are not included in the ocean freight rates of Clause 4.
+
+Clause 6 - Invoicing and Billing Discrepancies
+6.1 The Carrier shall invoice ocean freight in accordance with the rates of Clause 4.
+6.2 Any amount invoiced in excess of the agreed rates shall be credited or reimbursed to the Shipper upon presentation of a substantiated claim referencing the relevant invoice and this Agreement.
+
+Signed for Atlantic Ocean Lines
+Signed for Lumiere Retail Group SAS

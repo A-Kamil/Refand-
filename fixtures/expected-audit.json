@@ -1,0 +1,24 @@
+{
+  "status": "COMPLETED",
+  "discrepancies": [
+    {
+      "id": "FR-2026-0842#1:RATE_MISMATCH",
+      "type": "RATE_MISMATCH",
+      "status": "VERIFIED",
+      "invoiceNumber": "FR-2026-0842",
+      "shipmentId": "SHIP-00421",
+      "carrier": "Atlantic Ocean Lines",
+      "invoiceLineId": "FR-2026-0842#1",
+      "contractRateId": "AOL-SVC-2026-017#4.2.1",
+      "currency": "EUR",
+      "quantity": 1,
+      "unitRateMinor": 2400000,
+      "billedAmountMinor": 4250000,
+      "expectedAmountMinor": 2400000,
+      "differenceMinor": 1850000,
+      "invoiceEvidenceExcerpt": "1 | Ocean Freight | Shanghai (CNSHA) to Rotterdam (NLRTM) | 40HC | 1 | EUR 42,500.00 | EUR 42,500.00",
+      "contractEvidenceExcerpt": "4.2.1 Ocean Freight | Shanghai (CNSHA) to Rotterdam (NLRTM) | 40HC | EUR 24,000.00 per container"
+    }
+  ],
+  "totals": { "currency": "EUR", "verifiedOverchargeMinor": 1850000 }
+}

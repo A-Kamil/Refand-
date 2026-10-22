@@ -1,0 +1,2 @@
+invoice_number,invoice_date,carrier,shipment_id,shipment_date,port_of_loading,port_of_discharge,currency,line_no,description,container_type,quantity,unit_price,amount
+FR-2026-0842,2026-10-20,Atlantic Ocean Lines,SHIP-00421,2026-10-15,Shanghai (CNSHA),Rotterdam (NLRTM),EUR,1,Ocean Freight,40HC,1,42500.00,42500.00
