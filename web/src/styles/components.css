@@ -1,0 +1,643 @@
+/* ── Boutons ─────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  height: 40px;
+  padding: 0 var(--sp-5);
+  border: 1px solid rgb(20 29 23 / 0.12);
+  border-radius: var(--radius-pill);
+  background: var(--glass-strong);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 300ms var(--ease-out), border-color 300ms var(--ease-out),
+    transform 400ms var(--spring), box-shadow 400ms var(--ease-out);
+}
+.btn:hover:not(:disabled) {
+  background: var(--ink-50);
+  border-color: var(--ink-400);
+  color: var(--text);
+}
+.btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.btn--primary {
+  background: var(--accent);
+  border-color: var(--green-400);
+  color: var(--ink-900);
+  box-shadow: 0 6px 18px -6px rgb(38 189 104 / 0.55);
+}
+.btn--primary:hover:not(:disabled) {
+  background: var(--green-400);
+  border-color: var(--green-500);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-pop);
+}
+.btn svg:last-child:not(:first-child) {
+  transition: transform var(--dur) var(--ease);
+}
+.btn:hover:not(:disabled) svg:last-child:not(:first-child) {
+  transform: translateX(3px);
+}
+.btn--ghost {
+  border-color: transparent;
+  background: transparent;
+  color: var(--accent-ink);
+}
+.btn--ghost:hover:not(:disabled) {
+  background: var(--green-50);
+  border-color: transparent;
+  color: var(--green-900);
+}
+.btn.is-busy {
+  opacity: 0.75;
+  cursor: progress;
+}
+.linklike {
+  border: 0;
+  background: none;
+  padding: 0;
+  color: var(--accent-ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.icon-btn,
+.icon-link {
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.icon-btn:hover:not(:disabled),
+.icon-link:hover {
+  background: var(--ink-100);
+  color: var(--text);
+}
+
+/* ── Badges ──────────────────────────────────────────────── */
+.badge {
+  display: inline-block;
+  padding: 1px 8px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  line-height: 1.6;
+  color: var(--text-muted);
+  background: var(--sheet);
+}
+.badge--green {
+  color: var(--green-800);
+  background: var(--green-100);
+  border-color: var(--green-300);
+}
+.badge--warn {
+  color: var(--warn);
+  background: var(--warn-bg);
+  border-color: #e8cf8b;
+}
+.badge--danger {
+  color: var(--danger);
+  background: var(--danger-bg);
+  border-color: #eeb7ac;
+}
+
+/* ── Montants ────────────────────────────────────────────── */
+.money {
+  font-weight: 500;
+  white-space: nowrap;
+}
+.money--recover {
+  color: var(--recover);
+  font-weight: 600;
+}
+.money--danger {
+  color: var(--danger);
+}
+
+/* ── Feuille (carte) ─────────────────────────────────────── */
+/* « Sheet » : une section posée directement sur le fond — un filet, un titre, le contenu. Aucune carte. */
+.sheet {
+  padding: var(--sp-4) 0 0;
+  margin-bottom: var(--sp-7);
+  border-top: 1.5px solid var(--ink-900);
+}
+.sheet__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-5);
+}
+.sheet__head h2 {
+  font-size: var(--fs-xl);
+  letter-spacing: -0.03em;
+}
+.sheet__subhead {
+  margin: var(--sp-5) 0 var(--sp-3);
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+  font-family: var(--font-ui);
+  font-weight: 600;
+}
+.sheet__subhead:first-child {
+  margin-top: 0;
+}
+.sheet__foot {
+  margin-top: var(--sp-4);
+}
+.sheet__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  margin-top: var(--sp-5);
+}
+.sheet--simulated {
+  border-top: 1.5px dashed var(--ink-500);
+}
+
+/* ── Tableaux ────────────────────────────────────────────── */
+.table-wrap {
+  overflow-x: auto;
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-sm);
+}
+.table th {
+  padding: var(--sp-2) var(--sp-3);
+  text-align: left;
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  border-bottom: 1px solid var(--line-strong);
+  white-space: nowrap;
+}
+.table td {
+  padding: var(--sp-3);
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+.table tbody tr:hover {
+  background: rgb(255 255 255 / 0.7);
+}
+.table .num {
+  text-align: right;
+}
+.table__link {
+  font-weight: 600;
+  color: var(--text);
+  text-decoration-color: var(--green-400);
+}
+.table__link:hover {
+  color: var(--green-800);
+}
+.small {
+  font-size: var(--fs-xs);
+}
+
+/* ── Journal comptable : facturé − contractuel = écart ───── */
+.ledger {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-md);
+}
+.ledger th {
+  text-align: left;
+  font-weight: 500;
+  color: var(--text-muted);
+  padding: var(--sp-2) 0;
+}
+.ledger td {
+  text-align: right;
+  padding: var(--sp-2) 0;
+}
+.ledger__minus {
+  border-bottom: 1px solid var(--ink-900);
+}
+.ledger__total th {
+  color: var(--text);
+  font-weight: 600;
+  padding-top: var(--sp-3);
+}
+.ledger__total td {
+  padding-top: var(--sp-3);
+  font-size: var(--fs-lg);
+  /* double filet comptable */
+  border-bottom: 3px double var(--ink-900);
+}
+
+/* ── Clé / valeur, extraits ──────────────────────────────── */
+.kv {
+  margin: 0 0 var(--sp-4);
+}
+.kv > div {
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  gap: var(--sp-3);
+  padding: var(--sp-2) 0;
+  border-bottom: 1px dotted var(--line-strong);
+}
+.kv dt {
+  color: var(--text-faint);
+  font-size: var(--fs-sm);
+}
+.kv dd {
+  margin: 0;
+  font-size: var(--fs-sm);
+  font-weight: 500;
+}
+.excerpt {
+  margin: var(--sp-4) 0 0;
+}
+.excerpt blockquote {
+  margin: 0 0 var(--sp-2);
+  padding: var(--sp-3) var(--sp-4);
+  border-left: 3px solid var(--green-400);
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  line-height: 1.7;
+}
+.excerpt figcaption {
+  color: var(--text-faint);
+}
+.prose {
+  line-height: 1.7;
+}
+
+/* ── Notices ─────────────────────────────────────────────── */
+.notice {
+  display: flex;
+  gap: var(--sp-3);
+  align-items: flex-start;
+  padding: var(--sp-3) var(--sp-4);
+  margin: var(--sp-4) 0 var(--sp-5);
+  border: 1px solid;
+  border-radius: var(--radius);
+  font-size: var(--fs-sm);
+}
+.notice svg {
+  flex: none;
+  margin-top: 2px;
+}
+.notice ul {
+  margin: var(--sp-1) 0 0;
+  padding-left: var(--sp-5);
+}
+.notice--warn {
+  background: var(--warn-bg);
+  border-color: #e8cf8b;
+  color: #5c3d00;
+}
+.notice--danger {
+  background: var(--danger-bg);
+  border-color: #eeb7ac;
+  color: #7a2414;
+}
+
+/* ── États (chargement / vide / erreur) ──────────────────── */
+.state {
+  display: grid;
+  justify-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-7) var(--sp-5);
+  text-align: center;
+}
+.state--error {
+  color: var(--danger);
+}
+.state--error p {
+  max-width: 46ch;
+}
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-3);
+}
+.spinner {
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--ink-200);
+  border-top-color: var(--green-600);
+  border-radius: 50%;
+  animation: spin 800ms linear infinite;
+}
+.spinner--sm {
+  width: 14px;
+  height: 14px;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ── Étapes d'analyse ────────────────────────────────────── */
+.stepper {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.step {
+  position: relative;
+  display: grid;
+  grid-template-columns: 32px 1fr auto;
+  gap: var(--sp-4);
+  align-items: center;
+  padding: var(--sp-4) 0;
+}
+/* Trajet entre deux étapes : plein une fois franchi, pointillé qui avance quand c'est en cours */
+.step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 13px;
+  top: calc(50% + 18px);
+  bottom: calc(-50% + 18px);
+  width: 2px;
+  background: repeating-linear-gradient(180deg, var(--ink-300) 0 4px, transparent 4px 9px);
+}
+.step--done:not(:last-child)::after {
+  background: var(--green-400);
+}
+.step--running:not(:last-child)::after {
+  background: repeating-linear-gradient(180deg, var(--green-500) 0 4px, transparent 4px 9px);
+  background-size: 2px 9px;
+  animation: flow-down 0.8s linear infinite;
+}
+@keyframes flow-down {
+  to {
+    background-position-y: 9px;
+  }
+}
+.step__marker {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 1.5px solid var(--ink-300);
+  border-radius: 50%;
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  color: var(--text-faint);
+  background: var(--sheet);
+}
+.step__title {
+  font-weight: 600;
+}
+.step__hint {
+  font-size: var(--fs-sm);
+}
+.step__status {
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-faint);
+}
+.step--running .step__marker {
+  border-color: var(--green-600);
+  box-shadow: 0 0 0 5px rgb(130 246 173 / 0.35);
+}
+.step--running .step__status {
+  color: var(--green-700);
+}
+.step--done .step__marker {
+  background: var(--accent);
+  border-color: var(--green-500);
+  color: var(--ink-900);
+}
+.step--done .step__status {
+  color: var(--green-700);
+}
+.step--failed .step__marker {
+  background: var(--danger-bg);
+  border-color: var(--danger);
+  color: var(--danger);
+}
+.step--failed .step__status {
+  color: var(--danger);
+}
+.step--pending .step__title,
+.step--skipped .step__title {
+  color: var(--text-muted);
+}
+
+/* ── Dépôt de fichier ────────────────────────────────────── */
+.slots {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-5);
+}
+.slot__label {
+  display: block;
+  margin-bottom: var(--sp-2);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+.dropzone {
+  display: grid;
+  justify-items: center;
+  gap: var(--sp-1);
+  padding: var(--sp-6) var(--sp-4);
+  border: 1.5px dashed var(--ink-300);
+  border-radius: var(--radius);
+  text-align: center;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: border-color var(--dur-fast), background var(--dur-fast);
+}
+.dropzone:hover,
+.dropzone.is-over {
+  border-color: var(--green-600);
+  background: var(--green-50);
+}
+.dropzone__browse {
+  color: var(--accent-ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.slot__file {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  min-height: 72px;
+}
+.slot__file svg:first-child {
+  flex: none;
+  color: var(--text-muted);
+}
+.slot__meta {
+  flex: 1;
+  min-width: 0;
+}
+.slot__name {
+  font-weight: 600;
+  font-size: var(--fs-sm);
+  overflow-wrap: anywhere;
+}
+.slot__file--error {
+  border-color: var(--danger);
+  background: var(--danger-bg);
+}
+.slot__error {
+  color: var(--danger);
+}
+.slot__file--uploaded {
+  border-color: var(--green-500);
+  background: var(--green-50);
+}
+.slot__ok {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  color: var(--green-700);
+  font-weight: 600;
+}
+
+/* ── Couche « route » : flèches, anneau, surlignage, tampons ── */
+.flow-arrow {
+  display: inline-block;
+  width: 1.05em;
+  height: 0.42em;
+  margin: 0 0.18em;
+  vertical-align: 0.14em;
+  fill: none;
+  stroke: var(--green-500);
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  animation: nudge 2.4s var(--ease) infinite;
+}
+@keyframes nudge {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(6px);
+  }
+}
+.pen-circled {
+  position: relative;
+  display: inline-block;
+  padding: 0.05em 0.55em;
+  border-radius: var(--radius-pill);
+  background: var(--green-100);
+  box-shadow: 0 0 0 2px var(--green-500);
+  animation: pop var(--dur-draw) var(--ease);
+}
+.pen-circled::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: 0 0 0 2px var(--green-400);
+  animation: ring 2.8s ease-out infinite;
+}
+@keyframes pop {
+  from {
+    transform: scale(0.94);
+  }
+}
+@keyframes ring {
+  from {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  to {
+    transform: scale(1.22, 1.5);
+    opacity: 0;
+  }
+}
+.pen-underlined {
+  position: relative;
+  display: inline-block;
+  z-index: 0;
+}
+.pen-underlined::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  left: -0.05em;
+  right: -0.05em;
+  bottom: 0.06em;
+  height: 0.34em;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  transform-origin: left;
+  animation: sweep 900ms var(--ease) 300ms both;
+}
+@keyframes sweep {
+  from {
+    transform: scaleX(0);
+  }
+}
+.pen-marker {
+  color: inherit;
+  padding: 0 3px;
+  border-radius: 4px;
+  background: var(--green-200);
+}
+.pen-note {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 4px 12px 4px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--green-100);
+  color: var(--green-900);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+.pen-note svg {
+  animation: nudge 2.4s var(--ease) infinite;
+}
+.stamp {
+  display: inline-block;
+  padding: 2px 10px;
+  border: 1.5px solid currentColor;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-display);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.stamp--pen {
+  color: var(--pen);
+}
+.stamp--warn {
+  color: var(--warn);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pen-underlined::after,
+  .step--running:not(:last-child)::after,
+  .flow-arrow,
+  .pen-note svg,
+  .pen-circled::after {
+    animation: none;
+  }
+}
