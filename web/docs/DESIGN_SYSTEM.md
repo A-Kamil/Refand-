@@ -69,7 +69,6 @@ Hero : `clamp(2.6rem, 7vw, 5.4rem)`.
 ## 4. Mise en page : tout est posé sur le fond
 
 - **Sheet** = une section, pas une carte : un filet noir 1,5 px en haut, un titre, le contenu.
-- **Seule exception : `.sheet--card`** (zone « Your audits » du dashboard). Les routes animées du fond passaient derrière les chiffres et le tableau ; cette zone est posée sur un blanc à 93 % d'opacité, rayon 22 px, ombre douce. Ne l'utiliser que pour une zone dense (chiffres + tableau) où le fond gêne la lecture, jamais par défaut.
 - **Tableaux** : en-têtes en petites capitales, filets fins, montants alignés à droite.
 - **Document** : seule la lettre de réclamation est une « feuille » (c'est un vrai document à relire), avec une marge verte et le tampon DRAFT.
 - Contenu ≤ 1120 px, centré. Rayons : `--radius-sm 8`, `--radius 12`, pilule pour boutons et badges.
@@ -91,9 +90,16 @@ Aucun fond, aucune bordure, pas collante. De gauche à droite : le « & » (logo
 4. des ports qui émettent une onde ;
 5. des pointes de flèche qui suivent chaque route (`<animateMotion>`).
 
-Pas de halo, pas de grain, pas de suivi du curseur. Tout est `aria-hidden`, `pointer-events: none`, et coupé sous `prefers-reduced-motion`.
+Pas de halo lumineux, pas de grain, pas de suivi du curseur, pas de masque qui atténue les routes. Tout est `aria-hidden`, `pointer-events: none`, et coupé sous `prefers-reduced-motion`.
 
 ---
+
+### Lisibilité du texte sur le fond animé (sans cartes)
+Le contenu est posé directement sur le ciel, **routes et flèches à pleine intensité** partout. Deux mécanismes gardent le texte lisible :
+1. **Halo de texte** : `text-shadow` de la couleur du ciel autour des lettres (`base.css`), invisible sur fond uni, qui garde les lettres nettes si une route passe derrière. Désactivé sur les éléments qui ont leur propre fond (boutons, badges, tampons, anneau, barre de surlignage, lettre de réclamation).
+2. **Voile local `.sheet--veil`** : uniquement sur une zone dense (aujourd'hui « Your audits », chiffres + tableau). Une couche du ciel à 72 % d'opacité, floutée (18 px), qui atténue les routes **là seulement** ; pas de contour, pas d'ombre, aucun bord visible.
+
+N'atténuez jamais les routes globalement, et n'ajoutez pas de carte pour un problème de lisibilité : utilisez le halo, puis le voile sur la zone concernée.
 
 ## 6. Le flow « How it works » (widget à défilement horizontal)
 
