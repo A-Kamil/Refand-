@@ -1,0 +1,25 @@
+{
+  "invoiceNumber": "FR-2026-0842",
+  "carrier": "Atlantic Ocean Lines",
+  "shipmentId": "SHIP-00421",
+  "invoiceDate": "2026-10-20",
+  "shipmentDate": "2026-10-15",
+  "currency": "EUR",
+  "origin": "Shanghai (CNSHA)",
+  "destination": "Rotterdam (NLRTM)",
+  "containerType": "40HC",
+  "invoiceTotalText": "EUR 42,500.00",
+  "lines": [
+    {
+      "lineNumber": 1,
+      "description": "Ocean Freight",
+      "chargeLabel": "Ocean Freight",
+      "quantity": 1,
+      "unitPriceText": "EUR 42,500.00",
+      "amountText": "EUR 42,500.00",
+      "currency": "EUR",
+      "excerpt": "1 | Ocean Freight | Shanghai (CNSHA) to Rotterdam (NLRTM) | 40HC | 1 | EUR 42,500.00 | EUR 42,500.00"
+    }
+  ],
+  "warnings": []
+}

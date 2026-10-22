@@ -1,0 +1,112 @@
+{
+  "invoice": {
+    "documentId": "invoice-sample",
+    "filename": "invoice-sample.txt",
+    "invoiceNumber": "FR-2026-0842",
+    "carrier": "Atlantic Ocean Lines",
+    "shipmentId": "SHIP-00421",
+    "invoiceDate": "2026-10-20",
+    "shipmentDate": "2026-10-15",
+    "currency": "EUR",
+    "origin": "Shanghai (CNSHA)",
+    "destination": "Rotterdam (NLRTM)",
+    "route": "Shanghai (CNSHA) → Rotterdam (NLRTM)",
+    "containerType": "40HC",
+    "totalMinor": 4250000,
+    "lines": [
+      {
+        "id": "FR-2026-0842#1",
+        "lineNumber": 1,
+        "description": "Ocean Freight",
+        "chargeType": "OCEAN_FREIGHT",
+        "chargeLabel": "Ocean Freight",
+        "quantity": 1,
+        "unitPriceMinor": 4250000,
+        "amountMinor": 4250000,
+        "currency": "EUR",
+        "source": {
+          "documentId": "invoice-sample",
+          "filename": "invoice-sample.txt",
+          "excerpt": "1 | Ocean Freight | Shanghai (CNSHA) to Rotterdam (NLRTM) | 40HC | 1 | EUR 42,500.00 | EUR 42,500.00",
+          "verified": true
+        }
+      }
+    ]
+  },
+  "rates": [
+    {
+      "id": "AOL-SVC-2026-017#4.2.1",
+      "contractNumber": "AOL-SVC-2026-017",
+      "carrier": "Atlantic Ocean Lines",
+      "origin": "Shanghai (CNSHA)",
+      "destination": "Rotterdam (NLRTM)",
+      "route": "Shanghai (CNSHA) → Rotterdam (NLRTM)",
+      "containerType": "40HC",
+      "chargeType": "OCEAN_FREIGHT",
+      "chargeLabel": "Ocean Freight",
+      "unitRateMinor": 2400000,
+      "rateBasis": "PER_CONTAINER",
+      "currency": "EUR",
+      "validFrom": "2026-01-01",
+      "validTo": "2026-12-31",
+      "source": {
+        "documentId": "contract-sample",
+        "filename": "contract-sample.txt",
+        "excerpt": "4.2.1 Ocean Freight | Shanghai (CNSHA) to Rotterdam (NLRTM) | 40HC | EUR 24,000.00 per container",
+        "verified": true,
+        "section": "4.2.1"
+      }
+    },
+    {
+      "id": "AOL-SVC-2026-017#4.2.2",
+      "contractNumber": "AOL-SVC-2026-017",
+      "carrier": "Atlantic Ocean Lines",
+      "origin": "Shanghai (CNSHA)",
+      "destination": "Hamburg (DEHAM)",
+      "route": "Shanghai (CNSHA) → Hamburg (DEHAM)",
+      "containerType": "40HC",
+      "chargeType": "OCEAN_FREIGHT",
+      "chargeLabel": "Ocean Freight",
+      "unitRateMinor": 2550000,
+      "rateBasis": "PER_CONTAINER",
+      "currency": "EUR",
+      "validFrom": "2026-01-01",
+      "validTo": "2026-12-31",
+      "source": {
+        "documentId": "contract-sample",
+        "filename": "contract-sample.txt",
+        "excerpt": "4.2.2 Ocean Freight | Shanghai (CNSHA) to Hamburg (DEHAM) | 40HC | EUR 25,500.00 per container",
+        "verified": true,
+        "section": "4.2.2"
+      }
+    },
+    {
+      "id": "AOL-SVC-2026-017#4.2.3",
+      "contractNumber": "AOL-SVC-2026-017",
+      "carrier": "Atlantic Ocean Lines",
+      "origin": "Shanghai (CNSHA)",
+      "destination": "Rotterdam (NLRTM)",
+      "route": "Shanghai (CNSHA) → Rotterdam (NLRTM)",
+      "containerType": "20GP",
+      "chargeType": "OCEAN_FREIGHT",
+      "chargeLabel": "Ocean Freight",
+      "unitRateMinor": 1400000,
+      "rateBasis": "PER_CONTAINER",
+      "currency": "EUR",
+      "validFrom": "2026-01-01",
+      "validTo": "2026-12-31",
+      "source": {
+        "documentId": "contract-sample",
+        "filename": "contract-sample.txt",
+        "excerpt": "4.2.3 Ocean Freight | Shanghai (CNSHA) to Rotterdam (NLRTM) | 20GP | EUR 14,000.00 per container",
+        "verified": true,
+        "section": "4.2.3"
+      }
+    }
+  ],
+  "warnings": [],
+  "meta": {
+    "method": "FIXTURE",
+    "extractedAt": "2026-10-22T00:00:00.000Z"
+  }
+}
