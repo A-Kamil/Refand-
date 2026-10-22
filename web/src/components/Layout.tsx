@@ -33,9 +33,6 @@ export function Layout() {
               Dashboard
             </NavLink>
             <NavLink to="/audit/new">New audit</NavLink>
-            <NavLink to="/design-system" className="topbar__minor">
-              Design system
-            </NavLink>
           </nav>
 
           <Link to="/audit/new" className="topbar__cta">

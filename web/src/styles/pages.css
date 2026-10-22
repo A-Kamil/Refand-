@@ -413,51 +413,6 @@ html {
   font-size: var(--fs-sm);
 }
 
-/* ── Design system (specimen) ────────────────────────────── */
-.swatches {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--sp-3);
-}
-.swatch {
-  display: grid;
-  gap: var(--sp-1);
-  justify-items: start;
-}
-.swatch__chip {
-  width: 64px;
-  height: 40px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
-}
-.ds-brand {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-6);
-  flex-wrap: wrap;
-}
-.ds-brand__swatches {
-  display: flex;
-  gap: var(--sp-4);
-}
-.ds-type {
-  display: grid;
-  gap: var(--sp-5);
-}
-.ds-pen {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--sp-7);
-  padding: var(--sp-3) 0;
-}
-.ds-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--sp-3);
-  margin-bottom: var(--sp-5);
-}
-
 /* ── Responsive ──────────────────────────────────────────── */
 @media (max-width: 960px) {
   .split,
@@ -492,7 +447,6 @@ html {
   .topbar__nav {
     gap: var(--sp-4);
   }
-  .topbar__minor,
   .topbar__cta {
     display: none;
   }
@@ -533,5 +487,79 @@ html {
   .topbar__nav a::after,
   .topbar__cta svg {
     transition: none;
+  }
+}
+
+/* ── Comment ça marche : scène épinglée, défilement horizontal ── */
+.how { position: relative; height: calc(var(--n) * 115vh); margin: var(--sp-6) calc(50% - 50vw); width: 100vw; }
+.how__stage {
+  position: sticky; top: 0; display: grid;
+  grid-template-columns: minmax(0, 1fr); /* sans ça, la colonne s'élargit avec le rail (400vw) */
+  grid-template-rows: auto 1fr auto; height: 100vh; padding: var(--sp-6) 0 var(--sp-5); overflow: hidden;
+}
+.how__head, .how__progress { padding: 0 max(var(--sp-5), calc(50vw - 560px)); }
+.how__head h2 { margin-top: var(--sp-1); max-width: 24ch; font-size: clamp(1.4rem, 2.6vw, 2rem); letter-spacing: -0.03em; }
+.how__track { position: relative; display: flex; align-items: center; width: calc(var(--n) * 100vw); margin: 0; padding: 0; list-style: none; will-change: transform; }
+.how__rail {
+  position: absolute; left: 0; right: 0; bottom: 4vh; height: 16px; opacity: 0.8;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='16' fill='none' stroke='%2326bd68' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><path d='M7 2l6 6-6 6'/></svg>") repeat-x left center;
+  animation: flow-right 1s linear infinite;
+}
+@keyframes flow-right { to { background-position-x: 22px; } }
+.how__panel {
+  --d: 0; --a: 1;
+  display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr); align-items: center; gap: var(--sp-6);
+  flex: none; width: 100vw; padding: 0 max(var(--sp-5), calc(50vw - 560px));
+}
+.how__num {
+  font-family: var(--font-display); font-size: clamp(9rem, 26vw, 23rem); font-weight: 700; line-height: 0.9; letter-spacing: -0.06em;
+  color: rgb(130 246 173 / calc(0.28 + 0.62 * var(--a)));
+  transform: translateX(calc(var(--d) * 140px)) scale(calc(0.86 + 0.14 * var(--a))); transform-origin: left center;
+}
+.how__text { opacity: calc(0.2 + 0.8 * var(--a)); transform: translateX(calc(var(--d) * -70px)); }
+.how__text h3 { font-size: clamp(2.2rem, 5vw, 4rem); letter-spacing: -0.04em; }
+.how__text p { max-width: 40ch; margin-top: var(--sp-4); font-size: var(--fs-lg); color: var(--text-muted); }
+.how__detail { display: inline-block; margin-top: var(--sp-5); padding: 6px 14px; border-radius: var(--radius-pill); background: var(--green-100); color: var(--green-900); font-size: var(--fs-sm); font-weight: 600; }
+.how__bar { height: 3px; border-radius: var(--radius-pill); background: rgb(20 29 23 / 0.1); overflow: hidden; }
+.how__bar span { display: block; height: 100%; background: var(--green-500); transform: scaleX(0); transform-origin: left; }
+.how__ticks { display: flex; justify-content: space-between; margin-top: var(--sp-2); }
+.how__tick { font-size: var(--fs-xs); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); transition: color 400ms var(--ease-out); }
+.how__tick.is-on { color: var(--green-800); }
+
+@media (max-width: 760px) {
+  .how__panel { grid-template-columns: 1fr; gap: var(--sp-3); align-content: center; }
+  .how__num { font-size: clamp(6rem, 34vw, 10rem); }
+  .how__text p { font-size: var(--fs-md); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .how__rail { animation: none; display: none; }
+  .how { height: auto; }
+  .how__stage { position: static; height: auto; overflow: visible; }
+  .how__track { flex-direction: column; align-items: stretch; width: 100%; gap: var(--sp-7); padding: var(--sp-6) max(var(--sp-5), calc(50vw - 560px)); transform: none !important; }
+  .how__panel { width: auto; padding: 0; }
+  .how__progress { display: none; }
+}
+
+/* Lien d'ancre du hero */
+.hero__scroll {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--text-muted);
+  text-decoration: none;
+}
+.hero__scroll svg {
+  animation: bob-down 2s var(--ease) infinite;
+}
+@keyframes bob-down {
+  50% {
+    transform: translateY(4px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero__scroll svg {
+    animation: none;
   }
 }

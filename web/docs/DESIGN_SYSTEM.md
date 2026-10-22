@@ -2,7 +2,7 @@
 
 > Un ciel clair traversé de routes maritimes. Le contenu est posé directement dessus, sans cartes. Les flèches vont toujours vers l'avant : le produit vous aide à avancer, jusqu'au remboursement.
 
-Règle écrite. Le specimen vivant est dans l'app : **`/design-system`**. Les valeurs vivent à un seul endroit : [`src/styles/tokens.css`](../src/styles/tokens.css).
+Règle écrite (le design system vit dans la doc, pas dans l'app). Les valeurs vivent à un seul endroit : [`src/styles/tokens.css`](../src/styles/tokens.css).
 
 ---
 
@@ -74,7 +74,7 @@ Hero : `clamp(2.6rem, 7vw, 5.4rem)`.
 - Contenu ≤ 1120 px, centré. Rayons : `--radius-sm 8`, `--radius 12`, pilule pour boutons et badges.
 
 ### Barre de navigation
-Aucun fond, aucune bordure, pas collante. De gauche à droite : le « & » (logo 1), les liens en texte simple, un lien « Start an audit → ». Le lien actif a un trait menthe qui se déploie de gauche à droite ; au survol il se déploie à 35 %. Le logo pivote légèrement au survol.
+Aucun fond, aucune bordure, pas collante. De gauche à droite : le « & » (logo 1), deux liens en texte simple (Dashboard, New audit), un lien « Start an audit → ». Le lien actif a un trait menthe qui se déploie de gauche à droite ; au survol il se déploie à 35 %. Le logo pivote légèrement au survol.
 
 ---
 
@@ -91,9 +91,9 @@ Pas de halo, pas de grain, pas de suivi du curseur. Tout est `aria-hidden`, `poi
 
 ---
 
-## 6. Le flow « How it works » (retiré)
+## 6. Le flow « How it works » (widget à défilement horizontal)
 
-La section de défilement horizontal « How it works » n'est plus dans l'interface. Son texte, sa spec d'animation, ses pièges et son code complet sont conservés dans [`HOW_IT_WORKS.md`](HOW_IT_WORKS.md) pour pouvoir la remettre.
+Sous le hero du dashboard : une scène épinglée où le défilement **vertical** fait avancer les quatre étapes (Upload → Audit → Detect → Recover) **horizontalement**, de gauche à droite. Le rail de chevrons accélère avec la vitesse de scroll. Contenu, spec, pièges et code complet : [`HOW_IT_WORKS.md`](HOW_IT_WORKS.md).
 
 ## 7. Mouvement
 

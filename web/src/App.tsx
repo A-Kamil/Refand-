@@ -6,7 +6,6 @@ import { AnalysisProgress } from './pages/AnalysisProgress';
 import { AuditResults } from './pages/AuditResults';
 import { Investigation } from './pages/Investigation';
 import { Claim } from './pages/Claim';
-import { DesignSystem } from './pages/DesignSystem';
 
 export function App() {
   return (
@@ -18,7 +17,6 @@ export function App() {
         <Route path="analyses/:id/results" element={<AuditResults />} />
         <Route path="discrepancies/:id" element={<Investigation />} />
         <Route path="discrepancies/:id/claim" element={<Claim />} />
-        <Route path="design-system" element={<DesignSystem />} />
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>

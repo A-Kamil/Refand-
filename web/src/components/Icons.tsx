@@ -38,3 +38,4 @@ export const IconSearch = make(['M11 4a7 7 0 100 14 7 7 0 000-14z', 'M20 20l-4-4
 export const IconRefresh = make(['M20 11a8 8 0 00-14-4L4 9', 'M4 4v5h5', 'M4 13a8 8 0 0014 4l2-2', 'M20 20v-5h-5']);
 export const IconSwatch = make(['M4 4h7v7H4z', 'M13 4h7v7h-7z', 'M4 13h7v7H4z', 'M17 13v7', 'M13.5 16.5h7']);
 export const IconArrowUpRight = make(['M7 17L17 7', 'M8 7h9v9']);
+export const IconArrowDown = make(['M12 5v14', 'M6 13l6 6 6-6']);

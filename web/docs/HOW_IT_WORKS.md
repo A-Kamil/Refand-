@@ -1,6 +1,6 @@
-# « How it works » — section retirée de l'interface
+# « How it works » — widget à défilement horizontal
 
-Cette section a été retirée du dashboard. Tout son contenu, sa spec et son code sont conservés ici pour pouvoir la remettre (page d'accueil, landing, deck…).
+Section du dashboard (sous le hero). Contenu, spec d'animation et code complet sont documentés ici ; le code vit dans `src/components/HowItWorks.tsx` et le CSS dans `src/styles/pages.css` (bloc « Comment ça marche »).
 
 ## Contenu
 
@@ -39,9 +39,9 @@ Scène **épinglée** (`position: sticky`, 100 vh) : le défilement **vertical**
 - `.app` utilise `overflow-x: clip` (et non `hidden`) pour ne pas casser `position: sticky`.
 - Le défilement est mesuré par `getBoundingClientRect()` sur la section ; la boucle `requestAnimationFrame` s'arrête dès que le mouvement est stabilisé.
 
-## Remettre la section
+## Réutiliser ailleurs
 
-Dashboard : ajouter `<HowItWorks />` après le hero, et un lien `<a href="#how">How it works ↓</a>` dans les actions du hero (animation `bob-down` sur la flèche).
+Dashboard (déjà en place) : `<HowItWorks />` après le hero, et un lien `<a href="#how">How it works ↓</a>` dans les actions du hero (animation `bob-down` sur la flèche).
 
 ### `src/components/HowItWorks.tsx`
 

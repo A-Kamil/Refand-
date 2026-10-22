@@ -23,7 +23,7 @@ npm run dev                 # http://localhost:5173
 Sans `ANTHROPIC_API_KEY`, le bouton **Try with demo documents** lance une vraie analyse sur les documents de démo du backend (extraction pré-construite, étiquetée comme telle). Le pied de page affiche l'état réel du backend (base de données, IA).
 
 ## Parcours
-Dashboard → New audit → Analyse (3 étapes pilotées par le backend) → Résultats → Investigation → Réclamation (copie / téléchargement, brouillon à valider).
+Dashboard (hero + widget « How it works » à défilement horizontal) → New audit → Analyse (3 étapes pilotées par le backend) → Résultats → Investigation → Réclamation (copie / téléchargement, brouillon à valider).
 
 | Route | Page |
 |---|---|
@@ -31,11 +31,10 @@ Dashboard → New audit → Analyse (3 étapes pilotées par le backend) → Ré
 | `/audit/new` | Dépôt facture + contrat, ou documents de démo |
 | `/analyses/:id` · `/analyses/:id/results` | Progression · anomalies détectées |
 | `/discrepancies/:id` · `…/claim` | Investigation · brouillon de réclamation |
-| `/design-system` | Specimen du design system |
 
 ## Documentation
 - [`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md) — identité, nommage (refand / ref&), règles
-- [`docs/HOW_IT_WORKS.md`](docs/HOW_IT_WORKS.md) — section « How it works » retirée de l'UI : contenu, spec, code
+- [`docs/HOW_IT_WORKS.md`](docs/HOW_IT_WORKS.md) — widget « How it works » : contenu, spec, code
 - [`docs/API.md`](docs/API.md) — usage du contrat backend
 
 ## Structure

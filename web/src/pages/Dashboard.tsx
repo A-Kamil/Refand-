@@ -4,8 +4,9 @@ import { useAsync } from '../lib/useAsync';
 import { integer, moneyCompactMinor, moneyMinor } from '../lib/format';
 import { Badge, ButtonLink, EmptyState, ErrorState, Loading, Sheet } from '../components/ui';
 import { Stamp, Underlined } from '../components/Pen';
+import { HowItWorks } from '../components/HowItWorks';
 import { DiscrepancyTable } from '../components/DiscrepancyTable';
-import { IconArrowRight } from '../components/Icons';
+import { IconArrowDown, IconArrowRight } from '../components/Icons';
 
 function Kpi({ label, value, note, tone }: { label: string; value: ReactNode; note?: string; tone?: 'recover' }) {
   return (
@@ -35,9 +36,14 @@ export function Dashboard() {
           <ButtonLink to="/audit/new" variant="primary" className="btn--lg">
             Find out what you’re owed <IconArrowRight />
           </ButtonLink>
+          <a href="#how" className="hero__scroll">
+            How it works <IconArrowDown width={16} height={16} strokeWidth={2.2} />
+          </a>
         </div>
         <p className="faint small hero__note">You review every claim before anything is sent.</p>
       </section>
+
+      <HowItWorks />
 
       {state.status === 'loading' && <Loading label="Loading your dashboard" />}
 
