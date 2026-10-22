@@ -1,6 +1,6 @@
 # FreightRecover AI — Contrat d'API (pour le frontend Lovable)
 
-Base URL : `https://<url-aiven-runtime>` (en local : `http://localhost:8080`). JSON partout, CORS ouvert pour `*.lovable.app`, `*.lovableproject.com`, `*.lovable.dev` et `localhost`.
+Base URL : `https://01a16399-8429-78d3-b8f6-dbc0db27351b-8080.eur-1.aiven.app` (en local : `http://localhost:8080`). JSON partout, CORS ouvert pour `*.lovable.app`, `*.lovableproject.com`, `*.lovable.dev` et `localhost`.
 De vraies réponses capturées sont dans [`docs/api-examples/`](docs/api-examples/).
 
 **Montants** : entiers en centimes (`1850000` = 18 500,00 €). Formatage côté front : `(v / 100).toLocaleString("fr-FR", { style: "currency", currency })`.

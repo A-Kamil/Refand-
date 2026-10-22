@@ -8,7 +8,7 @@ Contrat d'API pour le frontend : voir [API.md](API.md).
 | Service | Statut | Usage |
 |---|---|---|
 | **Aiven for PostgreSQL** | Utilisé | Documents (fichier original en `bytea` + texte par page), analyses, contrats, tarifs, factures, lignes, anomalies, réclamations. Le contrôle des doublons interroge l'historique stocké. |
-| **Aiven Runtime** | Prêt (`Dockerfile` + `compose.aiven.yaml`) | Build depuis GitHub, `DATABASE_URL` injectée par l'intégration PostgreSQL. |
+| **Aiven Runtime** | Déployé (projet `busiris-e412`, AWS eu-west-1, depuis `MXXR-Fivem/Refand-` branche `dev1/api`) | Build depuis GitHub, `DATABASE_URL` injectée par l'intégration PostgreSQL. |
 | **Anthropic (Claude)** | Utilisé si `ANTHROPIC_API_KEY` est définie | Extraction documentaire et rédaction des réclamations. Calculs et matching déterministes. |
 | Aiven OpenSearch | Non utilisé | P2, non implémenté. |
 | Iterate | Non utilisé | Pas d'intégration. |
@@ -60,7 +60,7 @@ Plan B si Runtime n'est pas accessible : créer seulement **Aiven for PostgreSQL
 ## Vérification du parcours (backend déployé)
 
 ```bash
-API=https://<url-publique>
+API=https://01a16399-8429-78d3-b8f6-dbc0db27351b-8080.eur-1.aiven.app
 curl -s $API/health
 curl -s "$API/api/documents?demo=true"                       # documents de démo pré-chargés
 # Mode IA (clé requise) sur les PDF de démo :
