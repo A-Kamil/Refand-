@@ -1,0 +1,35 @@
+{
+    "id": "c5bad306-722a-440e-b251-e1fd9142dca0",
+    "discrepancyId": "62da9df2-af3a-4b48-9ea5-f8d71a2ef346",
+    "status": "DRAFT",
+    "requiresHumanApproval": true,
+    "generatedBy": "TEMPLATE",
+    "model": null,
+    "subject": "Freight Invoice Dispute — FR-2026-0842 (Shipment SHIP-00421)",
+    "body": "Dear Billing Team,\n\nWe have reviewed invoice FR-2026-0842 issued by Atlantic Ocean Lines for shipment SHIP-00421 against the applicable contractual rate and identified a billing discrepancy that we would like to raise for your review.\n\n- Billed amount: EUR 42,500.00\n- Contractual amount: EUR 24,000.00\n- Disputed amount: EUR 18,500.00\n- Calculation: EUR 42,500.00 − (EUR 24,000.00 × 1) = EUR 18,500.00\n\nSupporting evidence:\n1. Invoice (invoice-sample.pdf):\n   \"1 | Ocean Freight | Shanghai (CNSHA) to Rotterdam (NLRTM) | 40HC | 1 | EUR 42,500.00 | EUR 42,500.00\"\n2. Contract (contract-sample.pdf, clause 4.2.1):\n   \"4.2.1 Ocean Freight | Shanghai (CNSHA) to Rotterdam (NLRTM) | 40HC | EUR 24,000.00 per container\"\n\nWe kindly request that you review this charge and issue a credit note or reimbursement of the disputed amount of EUR 18,500.00 relating to invoice FR-2026-0842.\n\nPlease let us know if you require any further information.\n\nKind regards,\nFreight Audit Team",
+    "text": "DRAFT — requires human approval before sending\n\nSubject: Freight Invoice Dispute — FR-2026-0842 (Shipment SHIP-00421)\n\nDear Billing Team,\n\nWe have reviewed invoice FR-2026-0842 issued by Atlantic Ocean Lines for shipment SHIP-00421 against the applicable contractual rate and identified a billing discrepancy that we would like to raise for your review.\n\n- Billed amount: EUR 42,500.00\n- Contractual amount: EUR 24,000.00\n- Disputed amount: EUR 18,500.00\n- Calculation: EUR 42,500.00 − (EUR 24,000.00 × 1) = EUR 18,500.00\n\nSupporting evidence:\n1. Invoice (invoice-sample.pdf):\n   \"1 | Ocean Freight | Shanghai (CNSHA) to Rotterdam (NLRTM) | 40HC | 1 | EUR 42,500.00 | EUR 42,500.00\"\n2. Contract (contract-sample.pdf, clause 4.2.1):\n   \"4.2.1 Ocean Freight | Shanghai (CNSHA) to Rotterdam (NLRTM) | 40HC | EUR 24,000.00 per container\"\n\nWe kindly request that you review this charge and issue a credit note or reimbursement of the disputed amount of EUR 18,500.00 relating to invoice FR-2026-0842.\n\nPlease let us know if you require any further information.\n\nKind regards,\nFreight Audit Team\n",
+    "disputedAmountMinor": 1850000,
+    "currency": "EUR",
+    "invoiceNumber": "FR-2026-0842",
+    "shipmentId": "SHIP-00421",
+    "evidence": [
+        {
+            "excerpt": "1 | Ocean Freight | Shanghai (CNSHA) to Rotterdam (NLRTM) | 40HC | 1 | EUR 42,500.00 | EUR 42,500.00",
+            "filename": "invoice-sample.pdf",
+            "verified": true,
+            "documentId": "00000000-0000-4000-8000-000000000001"
+        },
+        {
+            "excerpt": "4.2.1 Ocean Freight | Shanghai (CNSHA) to Rotterdam (NLRTM) | 40HC | EUR 24,000.00 per container",
+            "section": "4.2.1",
+            "filename": "contract-sample.pdf",
+            "verified": true,
+            "documentId": "00000000-0000-4000-8000-000000000002"
+        }
+    ],
+    "warnings": [
+        "AI claim generation unavailable: AI_UNAVAILABLE; draft built from verified facts template."
+    ],
+    "createdAt": "2026-10-22T10:44:54.308Z",
+    "downloadUrl": "/api/claims/c5bad306-722a-440e-b251-e1fd9142dca0/download"
+}

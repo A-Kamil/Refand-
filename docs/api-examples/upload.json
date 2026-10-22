@@ -1,0 +1,38 @@
+{
+    "documents": [
+        {
+            "id": "43600e24-1973-4c9e-a1e2-fd74e0808359",
+            "kind": "INVOICE",
+            "filename": "invoice-sample.pdf",
+            "mimeType": "application/pdf",
+            "sizeBytes": 2246,
+            "sha256": "365bdb8a0e8ec59eb83f80b6a947028008ba86b0b1d0be9042c672bf58fba758",
+            "format": "PDF",
+            "pageCount": 1,
+            "status": "COMPLETED",
+            "warnings": [],
+            "error": null,
+            "isDemo": false,
+            "createdAt": "2026-10-22T10:44:52.687Z",
+            "contentUrl": "/api/documents/43600e24-1973-4c9e-a1e2-fd74e0808359/content"
+        },
+        {
+            "id": "2d7fd02a-ac6d-41f0-a368-12fbf235161f",
+            "kind": "CONTRACT",
+            "filename": "contract-sample.pdf",
+            "mimeType": "application/pdf",
+            "sizeBytes": 3448,
+            "sha256": "439a01cddb59809ac77b708a0e0c4f5c5a9fc7e10e4a6521c260e48d322acd3c",
+            "format": "PDF",
+            "pageCount": 2,
+            "status": "COMPLETED",
+            "warnings": [],
+            "error": null,
+            "isDemo": false,
+            "createdAt": "2026-10-22T10:44:52.717Z",
+            "contentUrl": "/api/documents/2d7fd02a-ac6d-41f0-a368-12fbf235161f/content"
+        }
+    ],
+    "invoiceDocumentId": "43600e24-1973-4c9e-a1e2-fd74e0808359",
+    "contractDocumentId": "2d7fd02a-ac6d-41f0-a368-12fbf235161f"
+}

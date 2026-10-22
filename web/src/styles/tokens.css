@@ -1,0 +1,115 @@
+/*
+  ref& — design tokens
+  Source de vérité : docs/DESIGN_SYSTEM.md
+  Règle : aucun composant n'utilise de valeur brute (couleur, espacement, rayon) ;
+  il consomme uniquement les variables ci-dessous.
+*/
+
+:root {
+  /* ── Marque ─────────────────────────────────────────────
+     Extraits de logo1.png / logo2.png :
+     menthe  #82F6AD  (le « & »)
+     gris    #707070  (le wordmark « ref »)                */
+  --brand-mint: #82f6ad;
+  --brand-gray: #707070;
+
+  /* ── Échelle verte (dérivée de la menthe, teinte ≈ 145°) ── */
+  --green-50: #f0fdf5;
+  --green-100: #dcfbe8;
+  --green-200: #bff7d4;
+  --green-300: #82f6ad; /* = brand-mint */
+  --green-400: #4fdc8b;
+  --green-500: #26bd68;
+  --green-600: #139550;
+  --green-700: #0e7840; /* texte vert sur blanc : 5.5:1 */
+  --green-800: #0f5d37;
+  --green-900: #0d4a2d;
+  --green-950: #072a19;
+
+  /* ── Neutres (gris du logo, légèrement teintés de vert) ── */
+  --paper: #f6f7f5; /* fond d'application */
+  --sheet: #ffffff; /* feuille / carte */
+  --ink-50: #f1f3f0;
+  --ink-100: #e6e9e5;
+  --ink-200: #d6dad5;
+  --ink-300: #bfc5bf;
+  --ink-400: #98a099;
+  --ink-500: #707070; /* = brand-gray */
+  --ink-600: #555d57;
+  --ink-700: #3a443d;
+  --ink-800: #232d26;
+  --ink-900: #141d17; /* texte principal */
+
+  /* ── Sémantique ── */
+  --text: var(--ink-900);
+  --text-muted: var(--ink-600);
+  --text-faint: var(--ink-500);
+  --line: var(--ink-200); /* filets de tableaux, bordures */
+  --line-strong: var(--ink-300);
+  --accent: var(--green-300); /* aplat de marque, surlignage, CTA */
+  --accent-ink: var(--green-700); /* verts lisibles en texte */
+  --recover: var(--green-700); /* montants récupérables */
+  --recover-bg: var(--green-100);
+  --danger: #b3361f; /* montant facturé en trop, erreurs */
+  --danger-bg: #fcece8;
+  --warn: #8a5a00;
+  --warn-bg: #fff3d4;
+  --pen: var(--green-800); /* encre des annotations */
+
+  /* ── Typographie ── */
+  --font-ui: 'Geist Variable', system-ui, sans-serif;
+  --font-display: 'Montserrat Variable', 'Geist Variable', sans-serif;
+  --font-mono: 'Geist Mono Variable', ui-monospace, monospace;
+
+  --fs-xs: 0.75rem; /* 12 */
+  --fs-sm: 0.8125rem; /* 13 */
+  --fs-md: 0.9375rem; /* 15 — corps */
+  --fs-lg: 1.125rem; /* 18 */
+  --fs-xl: 1.5rem; /* 24 */
+  --fs-2xl: 2rem; /* 32 */
+  --fs-3xl: 2.75rem; /* 44 */
+
+  /* ── Espacement (base 4) ── */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+  --sp-7: 48px;
+  --sp-8: 64px;
+
+  /* ── Forme : angles généreux, esprit « ciel » ── */
+  --radius-sm: 8px;
+  --radius: 12px;
+  --radius-lg: 22px;
+  --radius-pill: 999px;
+
+  /* ── Profondeur : une feuille posée sur un bureau, pas de flou diffus ── */
+  --shadow-sheet: 0 0 0 1px rgb(20 29 23 / 0.06), 0 1px 0 rgb(255 255 255 / 0.9) inset,
+    0 18px 44px -22px rgb(14 100 60 / 0.28);
+  --shadow-pop: 0 10px 34px -8px rgb(14 100 60 / 0.3);
+  --glass: rgb(255 255 255 / 0.72);
+  --glass-strong: rgb(255 255 255 / 0.86);
+
+  /* Flèche de fret (réutilisée en séparateur, via masque) */
+  --arrow-svg: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 16' fill='none' stroke='%2326bd68' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M2 8h34M29 2l7 6-7 6'/></svg>");
+
+  /* ── Mouvement ── */
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1); /* décélération « film » */
+  --spring: cubic-bezier(0.34, 1.45, 0.5, 1); /* léger rebond : nuages, boutons */
+  --dur-fast: 120ms;
+  --dur: 220ms;
+  --dur-draw: 700ms; /* tracé d'une annotation manuscrite */
+
+  --focus: 0 0 0 2px var(--sheet), 0 0 0 4px var(--green-600);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 0ms;
+    --dur: 0ms;
+    --dur-draw: 0ms;
+  }
+}

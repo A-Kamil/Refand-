@@ -1,0 +1,279 @@
+{
+    "id": "39435a24-38d4-46d2-8152-cfb35616ee55",
+    "status": "COMPLETED",
+    "stage": null,
+    "steps": [
+        {
+            "key": "EXTRACTION",
+            "label": "Document extraction",
+            "status": "done",
+            "startedAt": "2026-10-22T10:44:52.768021+00:00"
+        },
+        {
+            "key": "RATE_LOOKUP_AND_COMPARISON",
+            "label": "Contract rate lookup and comparison",
+            "status": "done",
+            "startedAt": "2026-10-22T10:44:52.77532+00:00"
+        },
+        {
+            "key": "DETECTION",
+            "label": "Anomaly and duplicate detection",
+            "status": "done",
+            "startedAt": "2026-10-22T10:44:52.783478+00:00"
+        }
+    ],
+    "stageHistory": [
+        {
+            "at": "2026-10-22T10:44:52.768021+00:00",
+            "stage": "EXTRACTING"
+        },
+        {
+            "at": "2026-10-22T10:44:52.77532+00:00",
+            "stage": "MATCHING_AND_AUDITING"
+        },
+        {
+            "at": "2026-10-22T10:44:52.783478+00:00",
+            "stage": "DUPLICATE_CHECK_AND_PERSISTENCE"
+        }
+    ],
+    "requestedMode": "FIXTURE",
+    "extractionMethod": "FIXTURE",
+    "model": null,
+    "documents": {
+        "invoice": {
+            "id": "00000000-0000-4000-8000-000000000001",
+            "kind": "INVOICE",
+            "filename": "invoice-sample.pdf",
+            "mimeType": "application/pdf",
+            "sizeBytes": 2246,
+            "sha256": "365bdb8a0e8ec59eb83f80b6a947028008ba86b0b1d0be9042c672bf58fba758",
+            "format": "PDF",
+            "pageCount": 1,
+            "status": "COMPLETED",
+            "warnings": [],
+            "error": null,
+            "isDemo": true,
+            "createdAt": "2026-10-22T10:44:52.194Z",
+            "contentUrl": "/api/documents/00000000-0000-4000-8000-000000000001/content"
+        },
+        "contract": {
+            "id": "00000000-0000-4000-8000-000000000002",
+            "kind": "CONTRACT",
+            "filename": "contract-sample.pdf",
+            "mimeType": "application/pdf",
+            "sizeBytes": 3448,
+            "sha256": "439a01cddb59809ac77b708a0e0c4f5c5a9fc7e10e4a6521c260e48d322acd3c",
+            "format": "PDF",
+            "pageCount": 2,
+            "status": "COMPLETED",
+            "warnings": [],
+            "error": null,
+            "isDemo": true,
+            "createdAt": "2026-10-22T10:44:52.217Z",
+            "contentUrl": "/api/documents/00000000-0000-4000-8000-000000000002/content"
+        }
+    },
+    "invoice": {
+        "lines": [
+            {
+                "id": "FR-2026-0842#1",
+                "source": {
+                    "excerpt": "1 | Ocean Freight | Shanghai (CNSHA) to Rotterdam (NLRTM) | 40HC | 1 | EUR 42,500.00 | EUR 42,500.00",
+                    "filename": "invoice-sample.pdf",
+                    "verified": true,
+                    "documentId": "00000000-0000-4000-8000-000000000001"
+                },
+                "currency": "EUR",
+                "quantity": 1,
+                "chargeType": "OCEAN_FREIGHT",
+                "lineNumber": 1,
+                "amountMinor": 4250000,
+                "chargeLabel": "Ocean Freight",
+                "description": "Ocean Freight",
+                "unitPriceMinor": 4250000
+            }
+        ],
+        "route": "Shanghai (CNSHA) → Rotterdam (NLRTM)",
+        "origin": "Shanghai (CNSHA)",
+        "carrier": "Atlantic Ocean Lines",
+        "currency": "EUR",
+        "filename": "invoice-sample.pdf",
+        "documentId": "00000000-0000-4000-8000-000000000001",
+        "shipmentId": "SHIP-00421",
+        "totalMinor": 4250000,
+        "destination": "Rotterdam (NLRTM)",
+        "invoiceDate": "2026-10-20",
+        "shipmentDate": "2026-10-15",
+        "containerType": "40HC",
+        "invoiceNumber": "FR-2026-0842"
+    },
+    "contractRates": [
+        {
+            "id": "AOL-SVC-2026-017#4.2.1",
+            "route": "Shanghai (CNSHA) → Rotterdam (NLRTM)",
+            "origin": "Shanghai (CNSHA)",
+            "source": {
+                "excerpt": "4.2.1 Ocean Freight | Shanghai (CNSHA) to Rotterdam (NLRTM) | 40HC | EUR 24,000.00 per container",
+                "section": "4.2.1",
+                "filename": "contract-sample.pdf",
+                "verified": true,
+                "documentId": "00000000-0000-4000-8000-000000000002"
+            },
+            "carrier": "Atlantic Ocean Lines",
+            "validTo": "2026-12-31",
+            "currency": "EUR",
+            "rateBasis": "PER_CONTAINER",
+            "validFrom": "2026-01-01",
+            "chargeType": "OCEAN_FREIGHT",
+            "chargeLabel": "Ocean Freight",
+            "destination": "Rotterdam (NLRTM)",
+            "containerType": "40HC",
+            "unitRateMinor": 2400000,
+            "contractNumber": "AOL-SVC-2026-017"
+        },
+        {
+            "id": "AOL-SVC-2026-017#4.2.2",
+            "route": "Shanghai (CNSHA) → Hamburg (DEHAM)",
+            "origin": "Shanghai (CNSHA)",
+            "source": {
+                "excerpt": "4.2.2 Ocean Freight | Shanghai (CNSHA) to Hamburg (DEHAM) | 40HC | EUR 25,500.00 per container",
+                "section": "4.2.2",
+                "filename": "contract-sample.pdf",
+                "verified": true,
+                "documentId": "00000000-0000-4000-8000-000000000002"
+            },
+            "carrier": "Atlantic Ocean Lines",
+            "validTo": "2026-12-31",
+            "currency": "EUR",
+            "rateBasis": "PER_CONTAINER",
+            "validFrom": "2026-01-01",
+            "chargeType": "OCEAN_FREIGHT",
+            "chargeLabel": "Ocean Freight",
+            "destination": "Hamburg (DEHAM)",
+            "containerType": "40HC",
+            "unitRateMinor": 2550000,
+            "contractNumber": "AOL-SVC-2026-017"
+        },
+        {
+            "id": "AOL-SVC-2026-017#4.2.3",
+            "route": "Shanghai (CNSHA) → Rotterdam (NLRTM)",
+            "origin": "Shanghai (CNSHA)",
+            "source": {
+                "excerpt": "4.2.3 Ocean Freight | Shanghai (CNSHA) to Rotterdam (NLRTM) | 20GP | EUR 14,000.00 per container",
+                "section": "4.2.3",
+                "filename": "contract-sample.pdf",
+                "verified": true,
+                "documentId": "00000000-0000-4000-8000-000000000002"
+            },
+            "carrier": "Atlantic Ocean Lines",
+            "validTo": "2026-12-31",
+            "currency": "EUR",
+            "rateBasis": "PER_CONTAINER",
+            "validFrom": "2026-01-01",
+            "chargeType": "OCEAN_FREIGHT",
+            "chargeLabel": "Ocean Freight",
+            "destination": "Rotterdam (NLRTM)",
+            "containerType": "20GP",
+            "unitRateMinor": 1400000,
+            "contractNumber": "AOL-SVC-2026-017"
+        }
+    ],
+    "extractionWarnings": [],
+    "audit": {
+        "status": "COMPLETED",
+        "lineResults": [
+            {
+                "outcome": "OVERCHARGE",
+                "reasons": [],
+                "invoiceLineId": "FR-2026-0842#1",
+                "matchedRateId": "AOL-SVC-2026-017#4.2.1",
+                "differenceMinor": 1850000,
+                "billedAmountMinor": 4250000,
+                "expectedAmountMinor": 2400000
+            }
+        ],
+        "reviewItems": [],
+        "warnings": []
+    },
+    "discrepancies": [
+        {
+            "id": "62da9df2-af3a-4b48-9ea5-f8d71a2ef346",
+            "engineId": "FR-2026-0842#1:RATE_MISMATCH",
+            "analysisId": "39435a24-38d4-46d2-8152-cfb35616ee55",
+            "type": "RATE_MISMATCH",
+            "status": "VERIFIED",
+            "claimable": true,
+            "invoiceNumber": "FR-2026-0842",
+            "shipmentId": "SHIP-00421",
+            "carrier": "Atlantic Ocean Lines",
+            "currency": "EUR",
+            "billedAmountMinor": 4250000,
+            "expectedAmountMinor": 2400000,
+            "differenceMinor": 1850000,
+            "calculation": "EUR 42,500.00 − (EUR 24,000.00 × 1) = EUR 18,500.00",
+            "explanation": "The invoiced Ocean Freight charge of EUR 42,500.00 on invoice FR-2026-0842 exceeds the contractual rate of EUR 24,000.00 per container × 1 (clause 4.2.1, Shanghai (CNSHA) → Rotterdam (NLRTM), 40HC) by EUR 18,500.00.",
+            "evidence": {
+                "calculation": "EUR 42,500.00 − (EUR 24,000.00 × 1) = EUR 18,500.00",
+                "explanation": "The invoiced Ocean Freight charge of EUR 42,500.00 on invoice FR-2026-0842 exceeds the contractual rate of EUR 24,000.00 per container × 1 (clause 4.2.1, Shanghai (CNSHA) → Rotterdam (NLRTM), 40HC) by EUR 18,500.00.",
+                "matchCriteria": [
+                    {
+                        "criterion": "CHARGE_TYPE",
+                        "invoiceValue": "Ocean Freight (OCEAN_FREIGHT)",
+                        "contractValue": "Ocean Freight (OCEAN_FREIGHT)"
+                    },
+                    {
+                        "criterion": "CARRIER",
+                        "invoiceValue": "Atlantic Ocean Lines",
+                        "contractValue": "Atlantic Ocean Lines"
+                    },
+                    {
+                        "criterion": "ROUTE",
+                        "invoiceValue": "Shanghai (CNSHA) → Rotterdam (NLRTM)",
+                        "contractValue": "Shanghai (CNSHA) → Rotterdam (NLRTM)"
+                    },
+                    {
+                        "criterion": "CONTAINER",
+                        "invoiceValue": "40HC",
+                        "contractValue": "40HC"
+                    },
+                    {
+                        "criterion": "DATE",
+                        "invoiceValue": "2026-10-15",
+                        "contractValue": "2026-01-01 to 2026-12-31"
+                    },
+                    {
+                        "criterion": "CURRENCY",
+                        "invoiceValue": "EUR",
+                        "contractValue": "EUR"
+                    }
+                ],
+                "invoiceEvidence": {
+                    "excerpt": "1 | Ocean Freight | Shanghai (CNSHA) to Rotterdam (NLRTM) | 40HC | 1 | EUR 42,500.00 | EUR 42,500.00",
+                    "filename": "invoice-sample.pdf",
+                    "verified": true,
+                    "documentId": "00000000-0000-4000-8000-000000000001"
+                },
+                "contractEvidence": {
+                    "excerpt": "4.2.1 Ocean Freight | Shanghai (CNSHA) to Rotterdam (NLRTM) | 40HC | EUR 24,000.00 per container",
+                    "section": "4.2.1",
+                    "filename": "contract-sample.pdf",
+                    "verified": true,
+                    "documentId": "00000000-0000-4000-8000-000000000002"
+                }
+            },
+            "claimCount": 0,
+            "latestClaimId": null,
+            "createdAt": "2026-10-22T10:44:52.786Z"
+        }
+    ],
+    "totals": {
+        "currency": "EUR",
+        "verifiedRecoverableMinor": 1850000,
+        "potentialDuplicateMinor": 0
+    },
+    "error": null,
+    "createdAt": "2026-10-22T10:44:52.748Z",
+    "startedAt": "2026-10-22T10:44:52.768Z",
+    "completedAt": "2026-10-22T10:44:52.786Z",
+    "durationMs": 18
+}

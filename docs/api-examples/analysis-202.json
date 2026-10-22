@@ -1,0 +1,78 @@
+{
+    "id": "39435a24-38d4-46d2-8152-cfb35616ee55",
+    "status": "PENDING",
+    "stage": null,
+    "steps": [
+        {
+            "key": "EXTRACTION",
+            "label": "Document extraction",
+            "status": "pending",
+            "startedAt": null
+        },
+        {
+            "key": "RATE_LOOKUP_AND_COMPARISON",
+            "label": "Contract rate lookup and comparison",
+            "status": "pending",
+            "startedAt": null
+        },
+        {
+            "key": "DETECTION",
+            "label": "Anomaly and duplicate detection",
+            "status": "pending",
+            "startedAt": null
+        }
+    ],
+    "stageHistory": [],
+    "requestedMode": "FIXTURE",
+    "extractionMethod": null,
+    "model": null,
+    "documents": {
+        "invoice": {
+            "id": "00000000-0000-4000-8000-000000000001",
+            "kind": "INVOICE",
+            "filename": "invoice-sample.pdf",
+            "mimeType": "application/pdf",
+            "sizeBytes": 2246,
+            "sha256": "365bdb8a0e8ec59eb83f80b6a947028008ba86b0b1d0be9042c672bf58fba758",
+            "format": "PDF",
+            "pageCount": 1,
+            "status": "COMPLETED",
+            "warnings": [],
+            "error": null,
+            "isDemo": true,
+            "createdAt": "2026-10-22T10:44:52.194Z",
+            "contentUrl": "/api/documents/00000000-0000-4000-8000-000000000001/content"
+        },
+        "contract": {
+            "id": "00000000-0000-4000-8000-000000000002",
+            "kind": "CONTRACT",
+            "filename": "contract-sample.pdf",
+            "mimeType": "application/pdf",
+            "sizeBytes": 3448,
+            "sha256": "439a01cddb59809ac77b708a0e0c4f5c5a9fc7e10e4a6521c260e48d322acd3c",
+            "format": "PDF",
+            "pageCount": 2,
+            "status": "COMPLETED",
+            "warnings": [],
+            "error": null,
+            "isDemo": true,
+            "createdAt": "2026-10-22T10:44:52.217Z",
+            "contentUrl": "/api/documents/00000000-0000-4000-8000-000000000002/content"
+        }
+    },
+    "invoice": null,
+    "contractRates": [],
+    "extractionWarnings": [],
+    "audit": null,
+    "discrepancies": [],
+    "totals": {
+        "currency": null,
+        "verifiedRecoverableMinor": 0,
+        "potentialDuplicateMinor": 0
+    },
+    "error": null,
+    "createdAt": "2026-10-22T10:44:52.748Z",
+    "startedAt": null,
+    "completedAt": null,
+    "durationMs": null
+}
