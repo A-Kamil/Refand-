@@ -147,15 +147,6 @@
   font-size: var(--fs-xl);
   letter-spacing: -0.03em;
 }
-/* Seule exception aux « pas de cartes » : la zone de chiffres et de tableau du dashboard,
-   où les routes du fond passaient derrière le texte. Blanc quasi opaque = lisibilité. */
-.sheet--card {
-  padding: var(--sp-5) var(--sp-5) var(--sp-5);
-  border-top: 0;
-  border-radius: var(--radius-lg);
-  background: rgb(255 255 255 / 0.93);
-  box-shadow: 0 0 0 1px rgb(20 29 23 / 0.06), 0 18px 40px -24px rgb(14 100 60 / 0.35);
-}
 .sheet__subhead {
   margin: var(--sp-5) 0 var(--sp-3);
   font-size: var(--fs-sm);

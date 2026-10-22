@@ -65,7 +65,6 @@ export function Dashboard() {
           {/* Chiffres réels, calculés par le backend depuis la base de données */}
           <Sheet
             title="Your audits"
-            className="sheet--card"
             aside={<Badge tone="green">Live data</Badge>}
           >
             {(() => {
