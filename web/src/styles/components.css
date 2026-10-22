@@ -147,6 +147,21 @@
   font-size: var(--fs-xl);
   letter-spacing: -0.03em;
 }
+/* Voile léger, sans bord net : atténue les routes du fond uniquement derrière cette zone
+   (chiffres + tableau). Ce n'est pas une carte : aucun contour, aucune ombre. */
+.sheet--veil {
+  position: relative;
+  isolation: isolate;
+}
+.sheet--veil::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: -20px -28px;
+  background: rgb(240 249 245 / 0.72);
+  filter: blur(18px);
+  pointer-events: none;
+}
 .sheet__subhead {
   margin: var(--sp-5) 0 var(--sp-3);
   font-size: var(--fs-sm);

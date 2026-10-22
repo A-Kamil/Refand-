@@ -90,16 +90,16 @@ Aucun fond, aucune bordure, pas collante. De gauche à droite : le « & » (logo
 4. des ports qui émettent une onde ;
 5. des pointes de flèche qui suivent chaque route (`<animateMotion>`).
 
-Pas de halo lumineux, pas de grain, pas de suivi du curseur. Tout est `aria-hidden`, `pointer-events: none`, et coupé sous `prefers-reduced-motion`.
+Pas de halo lumineux, pas de grain, pas de suivi du curseur, pas de masque qui atténue les routes. Tout est `aria-hidden`, `pointer-events: none`, et coupé sous `prefers-reduced-motion`.
 
 ---
 
 ### Lisibilité du texte sur le fond animé (sans cartes)
-Le contenu est posé directement sur le ciel ; deux mécanismes garantissent qu'il reste lisible :
-1. **Routes atténuées derrière la colonne de contenu** : un masque sur `.sky__routes` les garde vives sur les bords de l'écran et les réduit à 22 % derrière les 1120 px centraux.
-2. **Halo de texte** : `text-shadow` de la couleur du ciel autour des lettres (`base.css`), invisible sur fond uni, qui garde les lettres nettes si une route passe derrière. Désactivé sur les éléments qui ont leur propre fond (boutons, badges, tampons, anneau, barre de surlignage, lettre de réclamation).
+Le contenu est posé directement sur le ciel, **routes et flèches à pleine intensité** partout. Deux mécanismes gardent le texte lisible :
+1. **Halo de texte** : `text-shadow` de la couleur du ciel autour des lettres (`base.css`), invisible sur fond uni, qui garde les lettres nettes si une route passe derrière. Désactivé sur les éléments qui ont leur propre fond (boutons, badges, tampons, anneau, barre de surlignage, lettre de réclamation).
+2. **Voile local `.sheet--veil`** : uniquement sur une zone dense (aujourd'hui « Your audits », chiffres + tableau). Une couche du ciel à 72 % d'opacité, floutée (18 px), qui atténue les routes **là seulement** ; pas de contour, pas d'ombre, aucun bord visible.
 
-N'ajoutez pas de carte pour régler un problème de lisibilité : ajustez d'abord ces deux réglages.
+N'atténuez jamais les routes globalement, et n'ajoutez pas de carte pour un problème de lisibilité : utilisez le halo, puis le voile sur la zone concernée.
 
 ## 6. Le flow « How it works » (widget à défilement horizontal)
 
