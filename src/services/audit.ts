@@ -1,5 +1,6 @@
 import type {
   AuditResult,
+  InvoiceHistoryEntry,
   DocumentSource,
   ExtractedData,
   FreightInvoice,
@@ -9,6 +10,7 @@ import type {
   VerifiedDiscrepancy,
 } from "../types/shared.js";
 import { calculateOvercharge, matchRate } from "./contract-matcher.js";
+import { detectDuplicates } from "./duplicates.js";
 import { buildDiscrepancy } from "./evidence.js";
 import { formatMinor, normalizeCurrency } from "./normalization.js";
 
@@ -24,7 +26,17 @@ const SUPPORTED_CURRENCY = "EUR";
 
 type LineOutcome = { result: LineAuditResult; discrepancy: VerifiedDiscrepancy | null };
 
-export function auditInvoice(data: ExtractedData): AuditResult {
+export type AuditOptions = {
+  /**
+   * Previously analysed invoices to check for duplicate billing. When omitted, duplicates are not
+   * checked and `duplicateCheck.performed` is false. Pass [] to check against an empty history.
+   */
+  history?: InvoiceHistoryEntry[];
+  /** Id of the analysis being run, excluded from `history`. */
+  currentAnalysisId?: string;
+};
+
+export function auditInvoice(data: ExtractedData, options: AuditOptions = {}): AuditResult {
   const { invoice, rates } = data;
   const warnings = [...data.warnings];
   const reviewItems: AuditResult["reviewItems"] = [];
@@ -42,6 +54,37 @@ export function auditInvoice(data: ExtractedData): AuditResult {
     if (discrepancy) discrepancies.push(discrepancy);
   }
 
+  let duplicateCheck: AuditResult["duplicateCheck"] = {
+    performed: false,
+    historyChecked: 0,
+    sameDocumentAnalysisIds: [],
+    notes: ["No invoice history supplied; duplicate billing was not checked."],
+  };
+  if (options.history) {
+    const dup = detectDuplicates(
+      invoice,
+      options.history,
+      options.currentAnalysisId ? { currentAnalysisId: options.currentAnalysisId } : {},
+    );
+    duplicateCheck = dup.duplicateCheck;
+    reviewItems.push(...dup.reviewItems);
+    for (const d of dup.discrepancies) {
+      // The whole duplicated line is recoverable: the rate mismatch on the same line is superseded, not added.
+      for (const other of discrepancies) {
+        if (other.type === "RATE_MISMATCH" && other.invoiceLineId === d.invoiceLineId) other.supersededBy = d.id;
+      }
+      const lineResult = lineResults.find((r) => r.invoiceLineId === d.invoiceLineId);
+      if (lineResult) lineResult.duplicateDiscrepancyId = d.id;
+      discrepancies.push(d);
+    }
+    for (const item of dup.reviewItems) {
+      const lineResult = lineResults.find((r) => r.invoiceLineId === item.invoiceLineId);
+      if (!lineResult) continue;
+      lineResult.reasons.push({ code: item.code, message: item.message });
+      if (lineResult.outcome === "NO_DISCREPANCY") lineResult.outcome = "NEEDS_REVIEW";
+    }
+  }
+
   const totalsWarning = checkLineTotals(invoice);
   if (totalsWarning) warnings.push(totalsWarning);
   if (rates.length === 0) warnings.push("No contract rates were extracted");
@@ -57,8 +100,12 @@ export function auditInvoice(data: ExtractedData): AuditResult {
     warnings,
     totals: {
       currency,
-      verifiedOverchargeMinor: discrepancies.reduce((sum, d) => sum + d.differenceMinor, 0),
+      verifiedOverchargeMinor: discrepancies.reduce(
+        (sum, d) => sum + (d.type === "RATE_MISMATCH" && d.supersededBy ? 0 : d.differenceMinor),
+        0,
+      ),
     },
+    duplicateCheck,
   };
 }
 

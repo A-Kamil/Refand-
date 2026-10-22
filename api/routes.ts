@@ -7,6 +7,7 @@ import {
   renderClaimAsText,
   type DocumentKind,
   type LlmCaller,
+  type RateMismatchDiscrepancy,
   type VerifiedDiscrepancy,
 } from "../src/index.js";
 import { runAnalysis } from "./analysis-runner.js";
@@ -329,7 +330,8 @@ export async function registerRoutes(app: FastifyInstance, deps: RouteDeps): Pro
     const row = await getDiscrepancy(db, req.params.id);
     if (!row) return sendError(reply, 404, "NOT_FOUND", "Discrepancy not found.");
     const [analysis, claim] = await Promise.all([getAnalysis(db, row.analysis_id), getLatestClaim(db, row.id)]);
-    const payload = row.payload as Partial<VerifiedDiscrepancy>;
+    // Rate-specific fields are absent (null) for duplicate findings.
+    const payload = row.payload as Partial<RateMismatchDiscrepancy>;
     return {
       ...discrepancyDto(row),
       quantity: payload.quantity ?? null,

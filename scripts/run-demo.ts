@@ -4,6 +4,7 @@
  *   npm run demo                              # PDF fixtures, real AI calls (needs ANTHROPIC_API_KEY)
  *   npm run demo -- --invoice a.pdf --contract b.pdf
  *   npm run demo -- --fixture                 # offline: pre-built FIXTURE extraction, clearly labelled
+ *   npm run demo -- --duplicate               # analyse invoice-sample, then invoice-duplicate-sample with history
  */
 import { readFile } from "node:fs/promises";
 import path from "node:path";
@@ -34,7 +35,20 @@ async function loadDocument(file: string, kind: "INVOICE" | "CONTRACT") {
 
 async function main(): Promise<void> {
   let output: AnalysisOutput;
-  if (args.includes("--fixture")) {
+  if (args.includes("--duplicate")) {
+    console.log("MODE: LIVE AI — duplicate billing scenario\n");
+    const [first, second, contract] = await Promise.all([
+      loadDocument(path.join(root, "fixtures/invoice-sample.pdf"), "INVOICE"),
+      loadDocument(path.join(root, "fixtures/invoice-duplicate-sample.pdf"), "INVOICE"),
+      loadDocument(path.join(root, "fixtures/contract-sample.pdf"), "CONTRACT"),
+    ]);
+    const firstRun = await analyzeDocuments(first, contract, { history: [] });
+    console.log(`Analysis an-1: invoice ${firstRun.extracted.invoice.invoiceNumber} stored in history.\n`);
+    output = await analyzeDocuments(second, contract, {
+      history: [{ analysisId: "an-1", status: "ACTIVE", invoice: firstRun.extracted.invoice }],
+      currentAnalysisId: "an-2",
+    });
+  } else if (args.includes("--fixture")) {
     console.log("MODE: FIXTURE — pre-built structured extraction, NOT a live AI extraction.\n");
     const extracted = JSON.parse(await readFile(path.join(root, "fixtures/extracted-sample.json"), "utf8")) as ExtractedData;
     output = { extracted, audit: auditInvoice(extracted) };
@@ -55,12 +69,25 @@ async function main(): Promise<void> {
   console.log(`\nAudit status: ${audit.status}`);
   for (const r of audit.lineResults) console.log(`  line ${r.invoiceLineId}: ${r.outcome}${r.matchedRateId ? ` (rate ${r.matchedRateId})` : ""}`);
   for (const item of audit.reviewItems) console.log(`  review: [${item.code}] ${item.message}`);
+  if (audit.duplicateCheck.performed) {
+    console.log(`  duplicate check: ${audit.duplicateCheck.historyChecked} earlier invoice(s) compared`);
+    for (const note of audit.duplicateCheck.notes) console.log(`  note: ${note}`);
+  }
+  console.log(`  verified recoverable total: ${formatMinor(audit.totals.verifiedOverchargeMinor, audit.totals.currency ?? "EUR")}`);
 
   for (const d of audit.discrepancies) {
     console.log(`\nVERIFIED ${d.type}: ${d.calculation}`);
     console.log(`  invoice evidence : ${d.invoiceEvidence.filename} p.${d.invoiceEvidence.page ?? "-"} "${d.invoiceEvidence.excerpt}"`);
-    console.log(`  contract evidence: ${d.contractEvidence.filename} p.${d.contractEvidence.page ?? "-"} clause ${d.contractEvidence.section ?? "-"} "${d.contractEvidence.excerpt}"`);
+    if (d.type === "RATE_MISMATCH") {
+      console.log(`  contract evidence: ${d.contractEvidence.filename} p.${d.contractEvidence.page ?? "-"} clause ${d.contractEvidence.section ?? "-"} "${d.contractEvidence.excerpt}"`);
+    } else {
+      console.log(`  original invoice : ${d.original.invoiceNumber} (${d.original.invoiceDate}) ${d.originalEvidence.filename} p.${d.originalEvidence.page ?? "-"}`);
+    }
     console.log(`  ${d.explanation}`);
+    if (d.type === "RATE_MISMATCH" && d.supersededBy) {
+      console.log(`  superseded by ${d.supersededBy}: not counted, no separate claim.`);
+      continue;
+    }
 
     const claim = await generateClaim(d);
     console.log(`\nRecovery claim (generatedBy: ${claim.generatedBy}${claim.model ? `, ${claim.model}` : ""}) — disputed ${formatMinor(claim.disputedAmountMinor, claim.currency)}`);

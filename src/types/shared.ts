@@ -23,6 +23,8 @@ export type ParsedDocument = {
   text: string;
   /** True when `pages` maps to real page numbers (PDF only). */
   pageNumbered: boolean;
+  /** SHA-256 (hex) of the uploaded bytes. Identifies re-uploads of the exact same file. */
+  contentHash: string;
   warnings: string[];
 };
 
@@ -33,6 +35,7 @@ export type DocumentInput = {
   text: string;
   pages?: string[];
   pageNumbered?: boolean;
+  contentHash?: string;
 };
 
 export type DocumentSource = {
@@ -77,6 +80,8 @@ export type InvoiceLine = {
 export type FreightInvoice = {
   documentId: string;
   filename: string;
+  /** SHA-256 of the source file when known (from ParsedDocument). */
+  contentHash: string | null;
   invoiceNumber: string | null;
   carrier: string | null;
   shipmentId: string | null;
@@ -138,7 +143,9 @@ export type ReviewReasonCode =
   | "NO_APPLICABLE_RATE"
   | "AMBIGUOUS_RATE"
   | "UNSUPPORTED_RATE_BASIS"
-  | "MISSING_EVIDENCE";
+  | "MISSING_EVIDENCE"
+  | "DUPLICATE_INVOICE_NUMBER"
+  | "POSSIBLE_DUPLICATE";
 
 export type ReviewReason = {
   code: ReviewReasonCode;
@@ -151,7 +158,7 @@ export type MatchCriterion = {
   contractValue: string;
 };
 
-export type VerifiedDiscrepancy = {
+export type RateMismatchDiscrepancy = {
   /** Deterministic id: `${invoiceLineId}:RATE_MISMATCH`. */
   id: string;
   type: "RATE_MISMATCH";
@@ -173,6 +180,66 @@ export type VerifiedDiscrepancy = {
   invoiceEvidence: DocumentSource;
   contractEvidence: DocumentSource;
   explanation: string;
+  /**
+   * Set when the same invoice line is also a verified DUPLICATE_CHARGE: the whole line is recoverable,
+   * so this rate mismatch is not counted in totals and must not be claimed separately.
+   */
+  supersededBy?: string;
+};
+
+export type DuplicateCriterion = {
+  criterion: "CARRIER" | "SHIPMENT" | "CHARGE_TYPE" | "ROUTE" | "CONTAINER" | "QUANTITY" | "AMOUNT" | "CURRENCY";
+  currentValue: string;
+  originalValue: string;
+};
+
+/** Reference to the earlier invoice that already billed the same charge. */
+export type OriginalInvoiceReference = {
+  analysisId: string;
+  documentId: string;
+  filename: string;
+  invoiceNumber: string;
+  invoiceDate: string;
+  invoiceLineId: string;
+};
+
+/**
+ * The same charge (same carrier, shipment, charge type, route, container, quantity, amount and currency)
+ * billed again on a later invoice with a different invoice number, while the original is still active.
+ * The whole duplicated line amount is disputed: expected = 0.
+ */
+export type DuplicateChargeDiscrepancy = {
+  /** Deterministic id: `${invoiceLineId}:DUPLICATE_CHARGE`. */
+  id: string;
+  type: "DUPLICATE_CHARGE";
+  status: "VERIFIED";
+  invoiceNumber: string;
+  shipmentId: string;
+  carrier: string;
+  invoiceLineId: string;
+  currency: string;
+  quantity: number;
+  billedAmountMinor: number;
+  expectedAmountMinor: 0;
+  differenceMinor: number;
+  calculation: string;
+  duplicateCriteria: DuplicateCriterion[];
+  invoiceEvidence: DocumentSource;
+  original: OriginalInvoiceReference;
+  originalEvidence: DocumentSource;
+  explanation: string;
+};
+
+export type VerifiedDiscrepancy = RateMismatchDiscrepancy | DuplicateChargeDiscrepancy;
+
+/**
+ * A previously analysed invoice, as persisted by the API layer (store the ExtractedData invoice as-is).
+ * `status` comes from the business side: CREDITED / CANCELLED invoices are never treated as duplicated.
+ */
+export type InvoiceHistoryEntry = {
+  analysisId: string;
+  status: "ACTIVE" | "CREDITED" | "CANCELLED";
+  invoice: FreightInvoice;
 };
 
 export type LineAuditResult = {
@@ -184,6 +251,8 @@ export type LineAuditResult = {
   /** Signed billed − expected; null when not computable. */
   differenceMinor: number | null;
   reasons: ReviewReason[];
+  /** Set when this line is a verified DUPLICATE_CHARGE. */
+  duplicateDiscrepancyId?: string;
 };
 
 export type AuditResult = {
@@ -195,8 +264,19 @@ export type AuditResult = {
   warnings: string[];
   totals: {
     currency: string | null;
-    /** Sum of verified overcharges only. */
+    /**
+     * Verified recoverable amount, counted once per invoice line: a line that is a verified duplicate
+     * contributes its full amount; its superseded rate mismatch is not added on top.
+     */
     verifiedOverchargeMinor: number;
+  };
+  duplicateCheck: {
+    /** False when no history was supplied: duplicates were not checked. */
+    performed: boolean;
+    historyChecked: number;
+    /** Analyses of the exact same file (same SHA-256): a re-analysis, not a duplicate. */
+    sameDocumentAnalysisIds: string[];
+    notes: string[];
   };
 };
 

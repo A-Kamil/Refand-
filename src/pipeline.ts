@@ -1,7 +1,7 @@
 import type { LlmCaller } from "./ai/client.js";
 import { auditInvoice } from "./services/audit.js";
 import { extractDocuments, type ExtractionInput } from "./services/extraction.js";
-import type { AuditResult, ExtractedData } from "./types/shared.js";
+import type { AuditResult, ExtractedData, InvoiceHistoryEntry } from "./types/shared.js";
 
 /**
  * Real processing stages, reported when they actually start.
@@ -12,6 +12,9 @@ export type AnalysisStage = "EXTRACTING" | "MATCHING_AND_AUDITING";
 export type AnalysisOptions = {
   llm?: LlmCaller;
   onStage?: (stage: AnalysisStage) => void | Promise<void>;
+  /** Previously analysed invoices for duplicate detection (see auditInvoice). */
+  history?: InvoiceHistoryEntry[];
+  currentAnalysisId?: string;
 };
 
 export type AnalysisOutput = {
@@ -28,6 +31,9 @@ export async function analyzeDocuments(
   await options.onStage?.("EXTRACTING");
   const extracted = await extractDocuments(invoice, contract, options.llm ? { llm: options.llm } : {});
   await options.onStage?.("MATCHING_AND_AUDITING");
-  const audit = auditInvoice(extracted);
+  const audit = auditInvoice(extracted, {
+    ...(options.history ? { history: options.history } : {}),
+    ...(options.currentAnalysisId ? { currentAnalysisId: options.currentAnalysisId } : {}),
+  });
   return { extracted, audit };
 }

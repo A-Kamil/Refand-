@@ -2,7 +2,13 @@ import { z } from "zod";
 import { getDefaultCaller, type LlmCaller } from "../ai/client.js";
 import { RECOVERY_AGENT_SYSTEM_PROMPT } from "../ai/prompts.js";
 import { EngineError, isEngineError, type EngineErrorCode } from "../errors.js";
-import type { DocumentSource, RecoveryClaim, VerifiedDiscrepancy } from "../types/shared.js";
+import type {
+  DocumentSource,
+  DuplicateChargeDiscrepancy,
+  RateMismatchDiscrepancy,
+  RecoveryClaim,
+  VerifiedDiscrepancy,
+} from "../types/shared.js";
 import { collapseWhitespace, formatMinor, parseAmountToMinor } from "./normalization.js";
 
 /**
@@ -57,22 +63,31 @@ function isVerifiedSource(value: unknown): value is DocumentSource {
   return s.verified === true && isNonEmptyString(s.excerpt) && isNonEmptyString(s.filename);
 }
 
-/**
- * Runtime check: only a VERIFIED rate mismatch with consistent arithmetic and verified evidence
- * may become a claim. Data may come from JSON or a database, so nothing is trusted from the type.
- */
-export function assertClaimable(finding: VerifiedDiscrepancy): void {
-  const problems: string[] = [];
-  const f = (typeof finding === "object" && finding !== null ? finding : {}) as Partial<VerifiedDiscrepancy>;
+/** Invoice numbers compared for identity: uppercase, alphanumerics only ("fr-2026/0842" = "FR20260842"). */
+function normalizeInvoiceNumber(value: string): string {
+  return value.toUpperCase().replace(/[^A-Z0-9]/gu, "");
+}
 
+type LooseFinding = Record<string, unknown>;
+
+function checkCommon(f: LooseFinding, problems: string[]): void {
   if (f.status !== "VERIFIED") problems.push(`status is ${String(f.status)}, expected VERIFIED`);
-  if (f.type !== "RATE_MISMATCH") problems.push(`type is ${String(f.type)}, expected RATE_MISMATCH`);
   if (!isNonEmptyString(f.id)) problems.push("missing discrepancy id");
   if (!isNonEmptyString(f.invoiceNumber)) problems.push("missing invoice number");
   if (!isNonEmptyString(f.shipmentId)) problems.push("missing shipment id");
   if (!isNonEmptyString(f.carrier)) problems.push("missing carrier");
+  if (!isNonEmptyString(f.invoiceLineId)) problems.push("missing invoice line id");
   if (typeof f.currency !== "string" || !/^[A-Z]{3}$/u.test(f.currency)) problems.push("invalid currency");
   if (!isSafePositiveInt(f.quantity)) problems.push("quantity must be a positive integer");
+  if (!isNonEmptyString(f.calculation)) problems.push("missing calculation");
+  if (!isVerifiedSource(f.invoiceEvidence)) problems.push("invoice evidence missing or not verified");
+}
+
+function checkRateMismatch(f: LooseFinding, problems: string[]): void {
+  if (f.supersededBy !== undefined && f.supersededBy !== null) {
+    problems.push(`superseded by duplicate finding ${String(f.supersededBy)}; claim that finding instead`);
+  }
+  if (!isNonEmptyString(f.contractRateId)) problems.push("missing contract rate id");
   if (!isSafePositiveInt(f.unitRateMinor)) problems.push("unitRateMinor must be a positive integer");
   if (!isSafeNonNegativeInt(f.billedAmountMinor)) problems.push("billedAmountMinor must be a non-negative integer");
   if (!isSafeNonNegativeInt(f.expectedAmountMinor)) problems.push("expectedAmountMinor must be a non-negative integer");
@@ -85,9 +100,51 @@ export function assertClaimable(finding: VerifiedDiscrepancy): void {
   ) {
     problems.push("billed − expected does not equal the difference");
   }
-  if (!isNonEmptyString(f.calculation)) problems.push("missing calculation");
-  if (!isVerifiedSource(f.invoiceEvidence)) problems.push("invoice evidence missing or not verified");
   if (!isVerifiedSource(f.contractEvidence)) problems.push("contract evidence missing or not verified");
+}
+
+function checkDuplicateCharge(f: LooseFinding, problems: string[]): void {
+  if (!isSafePositiveInt(f.billedAmountMinor)) problems.push("billedAmountMinor must be a positive integer");
+  if (f.expectedAmountMinor !== 0) problems.push("expectedAmountMinor must be 0 for a duplicate charge");
+  if (!isSafePositiveInt(f.differenceMinor) || f.differenceMinor !== f.billedAmountMinor) {
+    problems.push("differenceMinor must equal billedAmountMinor for a duplicate charge");
+  }
+  const original = (typeof f.original === "object" && f.original !== null ? f.original : {}) as LooseFinding;
+  if (!isNonEmptyString(original.invoiceNumber)) problems.push("missing original invoice number");
+  if (!isNonEmptyString(original.invoiceDate)) problems.push("missing original invoice date");
+  if (!isNonEmptyString(original.invoiceLineId)) problems.push("missing original invoice line id");
+  if (!isNonEmptyString(original.filename)) problems.push("missing original invoice filename");
+  if (
+    isNonEmptyString(original.invoiceNumber) &&
+    isNonEmptyString(f.invoiceNumber) &&
+    normalizeInvoiceNumber(original.invoiceNumber) === normalizeInvoiceNumber(f.invoiceNumber)
+  ) {
+    problems.push("original invoice number is the same as the current invoice number");
+  }
+  if (!isVerifiedSource(f.originalEvidence)) problems.push("original invoice evidence missing or not verified");
+}
+
+/**
+ * Runtime check: only a VERIFIED finding (rate mismatch or duplicate charge) with consistent arithmetic
+ * and verified evidence may become a claim. Data may come from JSON or a database, so nothing is trusted
+ * from the type.
+ */
+export function assertClaimable(finding: VerifiedDiscrepancy): void {
+  const problems: string[] = [];
+  const f = (typeof finding === "object" && finding !== null ? finding : {}) as LooseFinding;
+
+  switch (f.type) {
+    case "RATE_MISMATCH":
+      checkCommon(f, problems);
+      checkRateMismatch(f, problems);
+      break;
+    case "DUPLICATE_CHARGE":
+      checkCommon(f, problems);
+      checkDuplicateCharge(f, problems);
+      break;
+    default:
+      problems.push(`type is ${String(f.type)}, expected RATE_MISMATCH or DUPLICATE_CHARGE`);
+  }
 
   if (problems.length > 0) {
     throw new EngineError(
@@ -98,14 +155,30 @@ export function assertClaimable(finding: VerifiedDiscrepancy): void {
   }
 }
 
+/** Evidence attached to the claim, in letter order. */
+function claimEvidence(finding: VerifiedDiscrepancy): DocumentSource[] {
+  return finding.type === "DUPLICATE_CHARGE"
+    ? [finding.invoiceEvidence, finding.originalEvidence]
+    : [finding.invoiceEvidence, finding.contractEvidence];
+}
+
 // ---------------------------------------------------------------------------
 // AI payload
 // ---------------------------------------------------------------------------
 
+function amount(minor: number, currency: string): { minor: number; display: string } {
+  return { minor, display: formatMinor(minor, currency) };
+}
+
 /** Only verified facts go to the model; amounts are given both as integers and display strings. */
 export function buildClaimPayload(finding: VerifiedDiscrepancy): Record<string, unknown> {
+  return finding.type === "DUPLICATE_CHARGE" ? buildDuplicatePayload(finding) : buildRateMismatchPayload(finding);
+}
+
+function buildRateMismatchPayload(finding: RateMismatchDiscrepancy): Record<string, unknown> {
   const c = finding.currency;
   return {
+    type: finding.type,
     invoiceNumber: finding.invoiceNumber,
     shipmentId: finding.shipmentId,
     carrier: finding.carrier,
@@ -113,10 +186,10 @@ export function buildClaimPayload(finding: VerifiedDiscrepancy): Record<string, 
     quantity: finding.quantity,
     currency: c,
     amounts: {
-      billed: { minor: finding.billedAmountMinor, display: formatMinor(finding.billedAmountMinor, c) },
-      contractualUnitRate: { minor: finding.unitRateMinor, display: formatMinor(finding.unitRateMinor, c) },
-      expected: { minor: finding.expectedAmountMinor, display: formatMinor(finding.expectedAmountMinor, c) },
-      disputed: { minor: finding.differenceMinor, display: formatMinor(finding.differenceMinor, c) },
+      billed: amount(finding.billedAmountMinor, c),
+      contractualUnitRate: amount(finding.unitRateMinor, c),
+      expected: amount(finding.expectedAmountMinor, c),
+      disputed: amount(finding.differenceMinor, c),
     },
     calculation: finding.calculation,
     invoiceEvidence: {
@@ -129,6 +202,36 @@ export function buildClaimPayload(finding: VerifiedDiscrepancy): Record<string, 
       page: finding.contractEvidence.page ?? null,
       section: finding.contractEvidence.section ?? null,
       excerpt: finding.contractEvidence.excerpt,
+    },
+  };
+}
+
+function buildDuplicatePayload(finding: DuplicateChargeDiscrepancy): Record<string, unknown> {
+  const c = finding.currency;
+  return {
+    type: finding.type,
+    invoiceNumber: finding.invoiceNumber,
+    shipmentId: finding.shipmentId,
+    carrier: finding.carrier,
+    explanation: finding.explanation,
+    quantity: finding.quantity,
+    currency: c,
+    amounts: {
+      duplicatedCharge: amount(finding.billedAmountMinor, c),
+      disputed: amount(finding.differenceMinor, c),
+    },
+    calculation: finding.calculation,
+    invoiceEvidence: {
+      filename: finding.invoiceEvidence.filename,
+      page: finding.invoiceEvidence.page ?? null,
+      excerpt: finding.invoiceEvidence.excerpt,
+    },
+    originalInvoice: {
+      invoiceNumber: finding.original.invoiceNumber,
+      invoiceDate: finding.original.invoiceDate,
+      filename: finding.original.filename,
+      page: finding.originalEvidence.page ?? null,
+      excerpt: finding.originalEvidence.excerpt,
     },
   };
 }
@@ -214,19 +317,23 @@ export function validateClaimText(subject: string, body: string, finding: Verifi
   }
   if (!body.includes(finding.invoiceNumber)) problems.push(`Body must mention invoice number ${finding.invoiceNumber}.`);
   if (!body.includes(finding.shipmentId)) problems.push(`Body must mention shipment reference ${finding.shipmentId}.`);
+  if (finding.type === "DUPLICATE_CHARGE" && !body.includes(finding.original.invoiceNumber)) {
+    problems.push(`Body must mention the original invoice number ${finding.original.invoiceNumber}.`);
+  }
 
-  const allowed = new Map<number, string>([
-    [finding.billedAmountMinor, formatMinor(finding.billedAmountMinor, c)],
-    [finding.expectedAmountMinor, formatMinor(finding.expectedAmountMinor, c)],
-    [finding.unitRateMinor, formatMinor(finding.unitRateMinor, c)],
-    [finding.differenceMinor, disputed],
-  ]);
+  const allowedMinor =
+    finding.type === "DUPLICATE_CHARGE"
+      ? [finding.billedAmountMinor, finding.differenceMinor]
+      : [finding.billedAmountMinor, finding.expectedAmountMinor, finding.unitRateMinor, finding.differenceMinor];
+  const allowed = new Map<number, string>(allowedMinor.map((m) => [m, formatMinor(m, c)]));
   const allowedList = [...allowed.values()].join(", ");
-  // Verbatim quotes of the verified excerpts may carry other document amounts (e.g. a line unit price).
+  // Verbatim quotes of the verified excerpts (and of the code-built calculation) may carry other
+  // document amounts, e.g. a line unit price.
   let scanned = collapseWhitespace(`${subject}\n${body}`);
-  for (const source of [finding.invoiceEvidence, finding.contractEvidence]) {
-    const excerpt = collapseWhitespace(source.excerpt);
-    if (excerpt.length > 0) scanned = scanned.split(excerpt).join(" ");
+  const verbatim = [...claimEvidence(finding).map((source) => source.excerpt), finding.calculation];
+  for (const text of verbatim) {
+    const quoted = collapseWhitespace(text);
+    if (quoted.length > 0) scanned = scanned.split(quoted).join(" ");
   }
   for (const amount of extractMonetaryAmounts(scanned, c)) {
     if (amount.minor === null) {
@@ -260,6 +367,42 @@ function describeSource(source: DocumentSource, clause: boolean): string {
 
 /** Deterministic, neutral claim letter built only from the verified facts. */
 export function buildTemplateClaim(finding: VerifiedDiscrepancy): { subject: string; body: string } {
+  return finding.type === "DUPLICATE_CHARGE" ? buildDuplicateTemplate(finding) : buildRateMismatchTemplate(finding);
+}
+
+function buildDuplicateTemplate(finding: DuplicateChargeDiscrepancy): { subject: string; body: string } {
+  const duplicated = formatMinor(finding.differenceMinor, finding.currency);
+  const original = finding.original;
+  const subject = `Duplicate Billing — Invoice ${finding.invoiceNumber} (Shipment ${finding.shipmentId})`;
+  const body = [
+    "Dear Billing Team,",
+    "",
+    `We have reviewed invoice ${finding.invoiceNumber} issued by ${finding.carrier} for shipment ${finding.shipmentId} ` +
+      `and found that its charge of ${duplicated} duplicates the identical charge already billed on invoice ` +
+      `${original.invoiceNumber} dated ${original.invoiceDate}.`,
+    "",
+    `- Duplicated amount: ${duplicated}`,
+    `- Original invoice: ${original.invoiceNumber} dated ${original.invoiceDate} (${original.filename})`,
+    `- Calculation: ${finding.calculation}`,
+    "",
+    "Supporting evidence:",
+    `1. Invoice ${finding.invoiceNumber} (${describeSource(finding.invoiceEvidence, false)}):`,
+    `   "${collapseWhitespace(finding.invoiceEvidence.excerpt)}"`,
+    `2. Original invoice ${original.invoiceNumber} (${describeSource(finding.originalEvidence, false)}):`,
+    `   "${collapseWhitespace(finding.originalEvidence.excerpt)}"`,
+    "",
+    `We kindly request that you cancel the duplicated charge on invoice ${finding.invoiceNumber} and issue a credit note ` +
+      `for ${duplicated}, or a reimbursement of ${duplicated} if it has already been paid.`,
+    "",
+    "Please let us know if you require any further information.",
+    "",
+    "Kind regards,",
+    "Freight Audit Team",
+  ].join("\n");
+  return { subject, body };
+}
+
+function buildRateMismatchTemplate(finding: RateMismatchDiscrepancy): { subject: string; body: string } {
   const c = finding.currency;
   const billed = formatMinor(finding.billedAmountMinor, c);
   const unit = formatMinor(finding.unitRateMinor, c);
@@ -353,7 +496,7 @@ export async function generateClaim(finding: VerifiedDiscrepancy, options: Gener
     currency: finding.currency,
     invoiceNumber: finding.invoiceNumber,
     shipmentId: finding.shipmentId,
-    evidence: [finding.invoiceEvidence, finding.contractEvidence],
+    evidence: claimEvidence(finding),
   };
 
   let fallbackReason: string;

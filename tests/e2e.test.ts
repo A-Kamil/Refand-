@@ -52,3 +52,60 @@ describe("end-to-end on PDF fixtures", () => {
     expect(JSON.parse(JSON.stringify(output))).toEqual(output);
   });
 });
+
+describe("end-to-end duplicate billing on PDF fixtures", () => {
+  const dupLlm: LlmCaller = async (request) => {
+    const content = typeof request.content === "string" ? request.content : "";
+    const name = content.includes('kind="CONTRACT"')
+      ? "contract"
+      : content.includes("FR-2026-0907") ? "invoice-duplicate" : "invoice";
+    return { raw: readFileSync(fixture(`model-output-${name}.json`), "utf8"), model: "fake-model" };
+  };
+
+  async function runBoth(llm?: LlmCaller) {
+    const read = (f: string, id: string, kind: "INVOICE" | "CONTRACT") =>
+      parseDocument({ documentId: id, filename: f, kind, content: readFileSync(fixture(f)) });
+    const [first, second, contract] = await Promise.all([
+      read("invoice-sample.pdf", "inv-1", "INVOICE"),
+      read("invoice-duplicate-sample.pdf", "inv-2", "INVOICE"),
+      read("contract-sample.pdf", "ctr-1", "CONTRACT"),
+    ]);
+    const opts = llm ? { llm } : {};
+    const a1 = await analyzeDocuments(first, contract, { ...opts, history: [] });
+    const history = [{ analysisId: "an-1", status: "ACTIVE" as const, invoice: a1.extracted.invoice }];
+    const a2 = await analyzeDocuments(second, contract, { ...opts, history, currentAnalysisId: "an-2" });
+    const again = await analyzeDocuments(first, contract, { ...opts, history, currentAnalysisId: "an-3" });
+    return { a1, a2, again };
+  }
+
+  function check({ a1, a2, again }: Awaited<ReturnType<typeof runBoth>>) {
+    expect(a1.audit.totals.verifiedOverchargeMinor).toBe(1850000);
+    expect(a1.extracted.invoice.contentHash).toMatch(/^[0-9a-f]{64}$/u);
+
+    expect(a2.audit.status).toBe("COMPLETED");
+    const dup = a2.audit.discrepancies.find((d) => d.type === "DUPLICATE_CHARGE");
+    expect(dup).toMatchObject({
+      invoiceNumber: "FR-2026-0907",
+      differenceMinor: 4250000,
+      original: { analysisId: "an-1", invoiceNumber: "FR-2026-0842", invoiceDate: "2026-10-20" },
+      invoiceEvidence: { filename: "invoice-duplicate-sample.pdf", page: 1, verified: true },
+      originalEvidence: { filename: "invoice-sample.pdf", page: 1, verified: true },
+    });
+    const rate = a2.audit.discrepancies.find((d) => d.type === "RATE_MISMATCH");
+    expect(rate).toMatchObject({ differenceMinor: 1850000, supersededBy: dup!.id });
+    expect(a2.audit.totals.verifiedOverchargeMinor).toBe(4250000);
+
+    // Re-uploading the first invoice (same bytes) is a re-analysis, not a duplicate.
+    expect(again.audit.status).toBe("COMPLETED");
+    expect(again.audit.discrepancies.map((d) => d.type)).toEqual(["RATE_MISMATCH"]);
+    expect(again.audit.duplicateCheck.sameDocumentAnalysisIds).toEqual(["an-1"]);
+  }
+
+  it("detects the duplicate with a fake model", async () => {
+    check(await runBoth(dupLlm));
+  });
+
+  it.skipIf(!process.env.ANTHROPIC_API_KEY)("detects the duplicate with real AI extraction", async () => {
+    check(await runBoth());
+  }, 180_000);
+});

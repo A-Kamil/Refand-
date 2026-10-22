@@ -117,6 +117,7 @@ export function toParsedDocument(row: DocumentRow): ParsedDocument {
     pages,
     text: pages.join("\n\n"),
     pageNumbered: row.format === "PDF",
+    contentHash: row.sha256,
     warnings: row.warnings,
   };
 }
@@ -313,7 +314,11 @@ async function insertRateDiscrepancy(client: DbClient, analysisId: string, invoi
     [
       analysisId, invoiceId, lineId, d.id, d.type, d.status, d.invoiceNumber, d.shipmentId, d.carrier, d.currency,
       d.billedAmountMinor, d.expectedAmountMinor, d.differenceMinor, d.calculation, d.explanation,
-      JSON.stringify({ invoiceEvidence: d.invoiceEvidence, contractEvidence: d.contractEvidence, matchCriteria: d.matchCriteria, calculation: d.calculation, explanation: d.explanation }),
+      JSON.stringify(
+        d.type === "RATE_MISMATCH"
+          ? { invoiceEvidence: d.invoiceEvidence, contractEvidence: d.contractEvidence, matchCriteria: d.matchCriteria, calculation: d.calculation, explanation: d.explanation }
+          : { invoiceEvidence: d.invoiceEvidence, originalEvidence: d.originalEvidence, original: d.original, duplicateCriteria: d.duplicateCriteria, calculation: d.calculation, explanation: d.explanation },
+      ),
       JSON.stringify(d),
     ],
   );

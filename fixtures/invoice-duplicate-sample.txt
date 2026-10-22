@@ -1,0 +1,28 @@
+ATLANTIC OCEAN LINES
+FREIGHT INVOICE
+
+FICTIONAL DOCUMENT - FREIGHTRECOVER AI DEMO
+
+Invoice No: FR-2026-0907
+Invoice Date: 2026-11-05
+Carrier: Atlantic Ocean Lines
+Bill To: Lumiere Retail Group SAS
+Contract Reference: AOL-SVC-2026-017
+
+Shipment Details
+Shipment ID: SHIP-00421
+Bill of Lading: AOLU-BL-7781204
+Shipment Date: 2026-10-15
+Port of Loading: Shanghai (CNSHA)
+Port of Discharge: Rotterdam (NLRTM)
+Equipment: 1 x 40HC
+Service: Ocean Freight
+
+Charges (Currency: EUR)
+Line | Description | Route | Equipment | Qty | Unit Price | Amount
+1 | Ocean Freight | Shanghai (CNSHA) to Rotterdam (NLRTM) | 40HC | 1 | EUR 42,500.00 | EUR 42,500.00
+
+Total Ocean Freight: EUR 42,500.00
+Invoice Total: EUR 42,500.00
+
+Payment Terms: 30 days from invoice date.

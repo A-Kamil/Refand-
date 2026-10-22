@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { parse as parseCsv } from "csv-parse/sync";
 import { extractText, getDocumentProxy } from "unpdf";
 import { EngineError } from "../errors.js";
@@ -52,6 +53,7 @@ export async function parseDocument(input: ParseDocumentInput): Promise<ParsedDo
     pages,
     text: pages.join("\n\n"),
     pageNumbered: format === "PDF",
+    contentHash: createHash("sha256").update(bytes).digest("hex"),
     warnings,
   };
 }
