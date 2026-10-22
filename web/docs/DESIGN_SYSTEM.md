@@ -69,6 +69,7 @@ Hero : `clamp(2.6rem, 7vw, 5.4rem)`.
 ## 4. Mise en page : tout est posé sur le fond
 
 - **Sheet** = une section, pas une carte : un filet noir 1,5 px en haut, un titre, le contenu.
+- **Seule exception : `.sheet--card`** (zone « Your audits » du dashboard). Les routes animées du fond passaient derrière les chiffres et le tableau ; cette zone est posée sur un blanc à 93 % d'opacité, rayon 22 px, ombre douce. Ne l'utiliser que pour une zone dense (chiffres + tableau) où le fond gêne la lecture, jamais par défaut.
 - **Tableaux** : en-têtes en petites capitales, filets fins, montants alignés à droite.
 - **Document** : seule la lettre de réclamation est une « feuille » (c'est un vrai document à relire), avec une marge verte et le tampon DRAFT.
 - Contenu ≤ 1120 px, centré. Rayons : `--radius-sm 8`, `--radius 12`, pilule pour boutons et badges.
